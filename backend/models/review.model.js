@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
-import modelOptions from "./model.options";
+import modelOptions from './model.options.js';
 
 
 
 var ReviewSchema =  mongoose.Schema({
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Restaurant",
+    ref: "Account",
     required: true,
   },
   employee: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Employee",
+    ref: "Account",
     required: true,
   },
   rating: {

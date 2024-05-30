@@ -42,7 +42,7 @@ const postSchema = new Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Restaurant",
+      ref: "Account",
       required: true,
     },
     content: [{

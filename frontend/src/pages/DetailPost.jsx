@@ -16,9 +16,9 @@ const DetailPost = () => {
             paddingBottom: '10%',
         }}>
             <Box sx={{
-                margin: '0 376px',
+                margin: '0 567px',
                 padding: '0 24px 12px',
-                maxWidth: '768px'
+                // maxWidth: '768px'
             }}>
                 <Typography variant="h1" sx={{
                     fontWeight: 'bold',
@@ -63,7 +63,8 @@ const DetailPost = () => {
                     gap: '24px'
                 }}>
                     {post.content.map((item, index) => (
-                        <><ImageListItem key={index}>
+                        <>
+                        <ImageListItem key={index}>
                             <img src={item.image} alt={item.descriptions} />
                         </ImageListItem>
                             <Typography variant='p' sx={{ fontFamily: 'Arial, Tahoma, Bitstream Vera Sans, sans-serif', textWrap: 'balance', fontSize: '20px' }}>

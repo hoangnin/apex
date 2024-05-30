@@ -12,7 +12,7 @@ import { setUser } from "../../redux/features/userSlice";
 const SignupForm = ({ switchAuthState }) => {
   const dispatch = useDispatch();
 
-  const [isLoginRequest, setIsLoginRequest] = useState(false);
+  const [isSignUpRequest, setIsSignUpRequest] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
 
   const signUpForm = useFormik({
@@ -51,9 +51,9 @@ const SignupForm = ({ switchAuthState }) => {
     }),
     onSubmit: async values => {
       setErrorMessage(undefined);
-      setIsLoginRequest(true);
+      setIsSignUpRequest(true);
       const { response, err } = await userApi.signup(values);
-      setIsLoginRequest(false);
+      setIsSignUpRequest(false);
 
       if (response) {
         signUpForm.resetForm();
@@ -155,7 +155,7 @@ const SignupForm = ({ switchAuthState }) => {
         size="large"
         variant="contained"
         sx={{ marginTop: 4 }}
-        loading={isLoginRequest}
+        loading={isSignUpRequest}
       >
         sign up
       </LoadingButton>

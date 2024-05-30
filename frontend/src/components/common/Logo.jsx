@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material'
 
-const Logo = () => {
+const Logo = ({color}) => {
       return (
-        <Typography fontWeight="700" fontSize="1.7rem">
+        <Typography color={color} fontWeight="700" fontSize="1.7rem">
             Apex
         </Typography>
     )

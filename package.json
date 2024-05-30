@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@firebase/storage": "^0.12.5",
     "@emotion/styled": "^11.11.5",
+    "@firebase/storage": "^0.12.5",
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/styled-engine": "^5.15.14",
     "bcryptjs": "^2.4.3",

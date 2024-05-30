@@ -12,8 +12,8 @@ import Data from "../data/Data";
 
 const Profile = () => {
 
-    // const { user } = useSelector(state => state.user);
-    const user = Data.user[1];
+    const { user } = useSelector(state => state.user);
+    // const user = Data.user[1];
     // const [avatarUrl, setAvatarUrl] = useState('');
 
 
@@ -72,11 +72,12 @@ const Profile = () => {
                     display: 'flex',
                     paddingLeft: '10px',
                     alignItems: 'center',
-                    backgroundColor: "#f5f5f5",
+                    backgroundColor: "#01877E",
                     marginBottom: "1rem",
                     fontFamily: '"Nunito", sans-serif',
                     fontSize: "1.4rem",
                     fontWeight: "600",
+                    color: 'white'
                 }}>Cập nhật thông tin</Typography>
                 <AvatarUploader />
                 {/* <AvatarUploader handleUpload={handleAvatarUpload} avatar={user.avatar} /> */}
@@ -161,7 +162,8 @@ const Profile = () => {
                         sx={{
                             margin: '0 auto',
                             marginTop: 4,
-                            width: 'fit-content'
+                            width: 'fit-content',
+                            bgcolor: '#01877E',
                         }}
                     >
                         Cập nhật

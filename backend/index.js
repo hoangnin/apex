@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import routes from './routes/index.route.js';
 
+import cors from 'cors';
 // utils
 import connectDB from './config/db.js';
 
@@ -15,6 +16,9 @@ connectDB();
 
 const app = express()
 
+app.use(cors({
+  origin: 'http://localhost:5173' // or wherever you want to allow requests from
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());

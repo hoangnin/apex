@@ -18,7 +18,7 @@ const post = [
     content: [
       {
         image:
-          "https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/b5/4e/14/caption.jpg?w=1200&h=-1&s=1&cx=1920&cy=1080&chk=v1_5b03c925b0b538931ef3",
         descriptions: "Almost immediately after I booked a trip to Istanbul last summer, I started researching hammams. If there was one thing I was keen on doing while exploring the Mediterranean city, it was visiting a traditional Turkish bathhouse. Descended from Roman and Byzantine bathing rituals, the hammam itself dates all the way back to the 14th century. And in Istanbul, many of them, including the 440-year-old Kilic Ali Pasa and the 380-year-old Zeyrek Çinili Hamam (reopening in 2024 after a 13-year renovation) retain their historic grandeur and ethos. According to some accounts, the hammam began out of necessity—they were often built next to mosques so that worshippers could bathe before praying. But the hammam is also a gathering place, said Yavuz Suyolcu, project director at The Marmara Group, which is overseeing Zeyrek Çinili’s restoration. Turkish bathing culture evolved thanks to the Ottomans, he explained, who considered it central to their social life. ",
       },
       {

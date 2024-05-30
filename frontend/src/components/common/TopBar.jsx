@@ -76,7 +76,11 @@ const Topbar = () => {
                                         fontSize: "0.9rem",
                                         fontWeight: "600",
                                         color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-                                        mr: 2
+                                        bgcolor: appState.includes(item.state) ? "#01877E" : "white",
+                                        mr: 2,
+                                        '&:hover': {
+                                            bgcolor: appState.includes(item.state) ? "#01877E" : "white",
+                                        }
                                     }}
                                     component={Link}
                                     to={item.path}

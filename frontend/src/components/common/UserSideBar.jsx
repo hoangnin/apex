@@ -40,8 +40,8 @@ const UserSideBar = ({ children }) => {
                            justifyContent: 'flex-start',
                            padding: '0.6rem 10px',
                            width: '100%',
-                           color: 'black'   ,
-                           bgcolor: appState.includes(item.state) ? 'rgba(0,0,0,0.5)' : 'transparent',
+                           color: appState.includes(item.state) ? 'white' : 'black'   ,
+                           bgcolor: appState.includes(item.state) ? '#01877E' : 'transparent',
                            '&:hover': {
                               color: 'secondary.colorText',
                               bgColor: 'rgba(0,0,0,0.5)',

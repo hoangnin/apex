@@ -33,11 +33,12 @@ const ChangePassword = () => {
         display: 'flex',
         paddingLeft: '10px',
         alignItems: 'center',
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#01877E",
         marginBottom: "1rem",
         fontFamily: '"Nunito", sans-serif',
         fontSize: "1.4rem",
         fontWeight: "600",
+        color: 'white'
       }}>Change Password
       </Typography>
       <Box component="form" onSubmit={form.handleSubmit} >

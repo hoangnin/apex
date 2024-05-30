@@ -17,7 +17,7 @@ connectDB();
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173' // or wherever you want to allow requests from
+  origin: ['http://localhost:5173', 'https://apex-eight-pi.vercel.app' ]
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

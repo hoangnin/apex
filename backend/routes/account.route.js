@@ -62,9 +62,29 @@ router.post(
           .isLength({ min: 8 }).withMessage("Password must be at least 8 characters !"),
      requestHandler.validate,
      accountController.login,
-     // accountController.isNewQuarterPhotographer,
+     
 );
-
+router.post(
+     "/change-password",
+     body("username")
+          .exists().withMessage("Username is required !")
+          .isLength({ min: 8 }).withMessage("Username must be at least 8 characters !"),
+     body("password")
+          .exists().withMessage("Password is required !")
+          .isLength({ min: 8 }).withMessage("Password must be at least 8 characters !"),
+     body("newPassword")
+          .exists().withMessage("New password is required !")
+          .isLength({ min: 8 }).withMessage("New password must be at least 8 characters !"),
+     body("confirmNewPassword")
+          .exists().withMessage("Confirm new password is required !")
+          .isLength({ min: 8 }).withMessage("Confirm new password must be at least 8 characters !")
+          .custom((value, { req }) => {
+               if (value !== req.body.newPassword) throw new Error("Confirm new password dose not match!")
+               return true;
+          }),
+     requestHandler.validate,
+     accountController.changePassword,
+)
 
 // router.put("/update-password",
 //      tokenMiddleware.authenticate,

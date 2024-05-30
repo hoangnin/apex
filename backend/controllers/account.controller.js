@@ -120,7 +120,25 @@ const login = async (req, res, next) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const account = await accountModel.findById(req.account.id);
+    if (!account.validatePassword(oldPassword)) {
+      return responseHandler.badRequest(res, "Mật khẩu cũ không chính xác !");
+    }
+    account.setPassword(newPassword);
+    await account.save();
+    responseHandler.ok(res, "Đổi mật khẩu thành công !");
+  }
+  catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
+
 export default { 
   signup,
-  login
+  login,
+  changePassword
 };

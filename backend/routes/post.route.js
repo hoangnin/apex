@@ -14,7 +14,7 @@ router.get('/:postId/', postController.getPost)
 // get all reviews of a restaurant
 router.get('/:restaurantId/reviews', postController.getPostReviews)
 
-router.post('/:postId/reviews', postController.createPostReview)
+router.post('/:postId/review', postController.createPostReview)
 
 router.post('/edit', postController.updatePost);
 

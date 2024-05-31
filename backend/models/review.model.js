@@ -20,6 +20,10 @@ var ReviewSchema =  mongoose.Schema({
     max: 5,
     required: true,
   },
+  overView: {
+    type: String,
+    required: true,
+  },
   content: {
     cleanliness: {
       rating: {

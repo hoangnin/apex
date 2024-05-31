@@ -85,12 +85,13 @@ const getPostReviews = async (req, res) => {
 };
 const createPostReview = async (req, res) => {
   try {
-    const { restaurantId, employeeId, cleanlinessRating, cleanlinessComment, serviceRating, serviceComment } = req.body;
+    const { restaurantId, employeeId, cleanlinessRating, cleanlinessComment, serviceRating, serviceComment, overView } = req.body;
 
     const review = new reviewModel({
       restaurant: restaurantId,
       employee: employeeId,
       rating: (cleanlinessRating + serviceRating) / 2,
+      overView: overView,
       content: {
         cleanliness: {
           rating: cleanlinessRating,

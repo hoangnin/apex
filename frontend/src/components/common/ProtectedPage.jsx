@@ -4,7 +4,7 @@ import { setAuthModalOpen } from "../../redux/features/authModalSlice"
 import { useNavigate } from 'react-router'
 import { Typography } from '@mui/material'
 
-const ProtectedPage = (children) => {
+const ProtectedPage = ({children}) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {user} = useSelector((state) => state.user)

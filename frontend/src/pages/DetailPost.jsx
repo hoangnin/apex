@@ -12,7 +12,7 @@ const DetailPost = () => {
     const post = location.state.postData;
     return (
         <Box sx={{
-            paddingTop: '10%',
+            paddingTop: '7%',
             paddingBottom: '10%',
         }}>
             <Box sx={{
@@ -50,7 +50,7 @@ const DetailPost = () => {
                         lineHeight: '24px',
                         color: '#000000',
                         marginRight: '16px'
-                    }}>{post.author.displayName}</Typography>
+                    }}>{post.author.username}</Typography>
                     <Typography sx={{
                         fontSize: '14px',
                         lineHeight: '24px',

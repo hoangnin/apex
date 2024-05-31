@@ -50,7 +50,7 @@ const Add = () => {
                     left: { xs: "calc(50% - 25px)", md: 30 },
                 }}
             >
-                <Fab color="primary" aria-label="add">
+                <Fab color= '#01877E' aria-label="add">
                     <AddIcon />
                 </Fab>
             </Tooltip>

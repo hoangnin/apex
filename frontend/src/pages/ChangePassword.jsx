@@ -88,6 +88,7 @@ const ChangePassword = () => {
                      width: 'fit-content',
                      margin: '0 auto',
                      marginTop: 4,
+                     bgcolor: '#01877E',
                   }}
                >
                   Cập nhât

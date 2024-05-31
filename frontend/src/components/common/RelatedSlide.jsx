@@ -4,6 +4,7 @@ import AutoSwiper from "./AutoSwipper";
 import { toast } from "react-toastify";
 import Data from "../../data/Data";
 import RelatedItem from "./RelatedITem";
+import { Box } from "@mui/material";
 
 const RelatedSlide = ({ }) => {
   const [medias, setMedias] = useState([]);
@@ -23,7 +24,7 @@ const RelatedSlide = ({ }) => {
 //   }, [mediaType, mediaCategory]);
 
   return (
-    <AutoSwiper >
+      <AutoSwiper >
       {Data.post.slice(0, 4).map((item, index) => (
         <SwiperSlide key={index} >
           <RelatedItem post={item} />

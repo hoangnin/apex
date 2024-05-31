@@ -27,24 +27,34 @@ const routes = [
     },
     {
         path: "/profile",
-        element: <Profile />,
+        element: 
+        <ProtectedPage>
+            <Profile />
+        </ProtectedPage>
+        ,
         state: "profile"
     },
     {
         path: "/vouchers",
-        element: <Voucher />,
+        element: <ProtectedPage>
+            <Voucher />
+        </ProtectedPage>,
         state: "voucher"
     },
     {
         path: "/password-change",
         element: (
-                <ChangePassword />
+                <ProtectedPage>
+                    <ChangePassword />
+                </ProtectedPage>
         ),
         state: "password.change"
     },
     {
         path: "/history",
-        element: <Voucher />,
+        element: <ProtectedPage>
+        <Voucher />
+    </ProtectedPage>,
         state: "history"
     },
     {

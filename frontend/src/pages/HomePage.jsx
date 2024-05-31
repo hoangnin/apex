@@ -2,11 +2,25 @@ import HomeOutlined from "@mui/icons-material/HomeOutlined"
 import { Box, Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
 import Post from "../components/common/Post"
-import  Data  from "../data/Data"
+import Data from "../data/Data"
 import Add from "../components/common/Add"
 import ReviewsIcon from '@mui/icons-material/Reviews';
+import { useEffect, useState } from "react"
+import postApi from "../api/modules/post.api"
+import { toast } from "react-toastify"
 
 const HomePage = () => {
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const { response, err } = await postApi.getPosts();
+      if (response) setPosts(response);
+      if (err) toast.error(err.message);
+    };
+    getPosts();
+  }, []);
 
   return (
     <Box sx={{
@@ -16,9 +30,10 @@ const HomePage = () => {
     }}>
       <Box sx={{
         flex: 2,
-        display:{xs:'none',md:'block',
-          
-        }       
+        display: {
+          xs: 'none', md: 'block',
+
+        }
       }}>
         <Box position="fixed" display='flex' flexDirection='column' paddingLeft='20px'>
           {/* <List>
@@ -46,15 +61,15 @@ const HomePage = () => {
               fontSize: "0.9rem",
               fontWeight: "600",
               // color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-              color: "inherit" ,
+              color: "inherit",
               justifyContent: 'flex-start',
               mr: 2
             }}
             component={Link}
             to={'/'}
-            // variant={appState.includes(item.state) ? "contained" : "text"}
+          // variant={appState.includes(item.state) ? "contained" : "text"}
           >
-            <Box mr='10px'><HomeOutlined/></Box>
+            <Box mr='10px'><HomeOutlined /></Box>
             <Typography>Post</Typography>
           </Button>
           <Button
@@ -63,30 +78,30 @@ const HomePage = () => {
               fontSize: "0.9rem",
               fontWeight: "600",
               // color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-              color: "inherit" ,
+              color: "inherit",
               mr: 2,
               alignItems: 'center'
             }}
             component={Link}
             to={'/'}
-            // variant={appState.includes(item.state) ? "contained" : "text"}
+          // variant={appState.includes(item.state) ? "contained" : "text"}
           >
-            <Box mr='10px'><ReviewsIcon/></Box>
+            <Box mr='10px'><ReviewsIcon /></Box>
             <Typography>Reviews</Typography>
           </Button>
         </Box>
       </Box>
-      <Box flex={{xs:10,md:4}} p={{ xs: 0, md: 2 }}>
-            {Data.post.map((item,index)=>{
-              return <Post post={item} key={item.id} />
-            })}
+      <Box flex={{ xs: 10, md: 4 }} p={{ xs: 0, md: 2 }}>
+        {posts.map((item, index) => {
+          return <Post post={item} key={item.id} />
+        })}
       </Box>
       <Box sx={{
-        flex:2
+        flex: 2
       }}>
 
       </Box>
-      <Add/>
+      <Add />
     </Box>
   )
 }

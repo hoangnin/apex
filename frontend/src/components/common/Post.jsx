@@ -79,9 +79,9 @@ const Post = ({ post ,key}) => {
   //   return total;
   // };
 
-  const navigateToDetailPost = (id,post) => {
-    console.log(id)
-    navigate(`/post/${id}`,{ state: { postData: post } });
+  const navigateToDetailPost = (post) => {
+    console.log(post._id)
+    navigate(`/post/${post._id}`,{ state: { postData: post } });
   }
   
   // Usage
@@ -107,6 +107,7 @@ const Post = ({ post ,key}) => {
         : <Card sx={{ margin: 5,borderRadius:2 }}>
           <CardHeader
             avatar={
+              post.author.avatar === null ? <Avatar>{post.author.username.charAt(0)}</Avatar> :
               <Avatar src={post.author.avatar} />
 
             }
@@ -124,10 +125,10 @@ const Post = ({ post ,key}) => {
               maxHeight: '500px'
             }}
             image={post.content[0].image}
-            onClick={()=>navigateToDetailPost(post.id,post)}
+            onClick={()=>navigateToDetailPost(post)}
           />
           <CardContent>
-            <Typography variant="body2" color="text.secondary">
+            <Typography sx={{color:'rgb(82 82 82);',fontWeight:'bold'}} variant="h6" color="text.secondary">
               {post.title}
             </Typography>
           </CardContent>
@@ -216,8 +217,8 @@ const Post = ({ post ,key}) => {
                     p: '8px 12px',
                     borderRadius: 5,
                   }}>
-                    <Typography sx={{ fontWeight: 'bold', fontSize: '12px' }}>{comment.user}</Typography>
-                    <Typography sx={{ fontSize: '14px' }}>{comment.comment}</Typography>
+                    <Typography sx={{ fontWeight: 'bold', fontSize: '12px' }}>User</Typography>
+                    <Typography sx={{ fontSize: '14px' }}>{comment.content}</Typography>
                   </Box>
 
                   {/* <Box height='4px' component={Button}>Reply</Box> */}

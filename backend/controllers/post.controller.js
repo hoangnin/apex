@@ -18,13 +18,15 @@ const getPosts = async (req, res) => {
 
 const getPost = async (req, res) => {
   try {
-    const post = await postModel.findById(req.params.postId).populate('author', 'username _id avatar');
+    const post = await postModel.findById(req.params.postId)
+      .populate('author', 'username _id avatar')
+      .populate('comments.created_by', 'username _id avatar');
     responseHandler.ok(res, post);
   } catch (error) {
     console.error(error);
     responseHandler.error(res);
   }
-}
+};
 
 const createNewPost = async (req, res) => {
   try {

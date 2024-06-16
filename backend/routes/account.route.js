@@ -2,7 +2,7 @@ import express from 'express';
 import { body } from 'express-validator';
 import accountController from '../controllers/account.controller.js';
 import accountModel from '../models/account.model.js';
-// import tokenMiddleware from '../middlewares/token.middleware.js';
+import tokenMiddleware from '../middlewares/token.middleware.js';
 import requestHandler from '../handlers/request.handler.js';
 // import favoriteController from '../controllers/favorite.controller.js';
 
@@ -110,10 +110,10 @@ router.post(
 //      accountController.getInfo
 // );
 
-// router.put("/update-info",
-//      tokenMiddleware.authenticate,
-//      accountController.updateInfo
-// );
+router.put("/update-info",
+     tokenMiddleware.authenticate,
+     accountController.updateInfo
+);
 
 
 // router.get(

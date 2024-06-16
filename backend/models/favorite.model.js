@@ -6,7 +6,7 @@ export default mongoose.model(
    mongoose.Schema({
       account: {
          type: Schema.Types.ObjectId,
-         ref: "Account",
+         ref: "Customer",
          require: true
       },
       photo: {

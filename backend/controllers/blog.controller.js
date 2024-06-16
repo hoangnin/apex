@@ -6,7 +6,6 @@ import blogModel from "../models/blog.model.js";
 const createNewBlog = async (req, res) => {
   try {
     console.log("CustomerId: ", req.body.account.id);
-    // console.log("CustomerId12: ", req.account.id);
     // const CustomerId = req.account.id;
      const CustomerId =  req.body.account.id;
     

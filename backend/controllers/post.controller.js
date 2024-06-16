@@ -20,6 +20,7 @@ const getPost = async (req, res) => {
   try {
     const post = await postModel.findById(req.params.postId)
       .populate('author', 'username _id avatar')
+      .populate('restaurant', 'name _id avatar')
       .populate('comments.created_by', 'username _id avatar');
     responseHandler.ok(res, post);
   } catch (error) {
@@ -33,6 +34,7 @@ const createNewPost = async (req, res) => {
     const post = new postModel({
       title: req.body.title,
       description: req.body.description,
+      restaurant: req.body.restaurantId,
       content: req.body.content,
       author: req.body.authorId, // req.account.id
     });

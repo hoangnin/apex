@@ -15,7 +15,7 @@ const BlogSchema = new Schema(
     images: [String], // Array of image URLs
     customer: {
       type: Schema.Types.ObjectId,
-      ref: "Account",
+      ref: "Customer",
       required: true,
     },
     votesUp: {

@@ -2,6 +2,7 @@
 import responseHandler from "../handlers/response.handler.js";
 import Comment from "../models/comment.model.js";
 import Post from "../models/post.model.js";
+import Customer from "../models/customer.model.js";
 
 const addComment = (req, res) => {
     try {
@@ -165,12 +166,17 @@ const addPostComment = async (req, res) => {
 
     const comment = {
       content: req.body.content,
-      created_by: req.body.userId, // use req.account.id when merge with auth
+      created_by: req.account.id, 
       rating: req.body.rating,
     };
 
     post.comments.push(comment);
     await post.save();
+    const customer = await Customer.findOne({ account: req.account.id });
+    if (customer){
+      customer.accumulated_points += 1;
+      await customer.save();
+    }
 
     responseHandler.ok(res, {
       message: 'Comment added successfully',
@@ -207,7 +213,54 @@ const updatePostComment = async (req, res) => {
     responseHandler.error(res);
   }
 };
+const likePostComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return responseHandler.error(res, 'Post not found', 404);
+    }
 
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      return responseHandler.error(res, 'Comment not found', 404);
+    }
+
+    comment.total_liked += 1;
+    await post.save();
+
+    responseHandler.ok(res, {
+      message: 'Comment liked successfully',
+      comment: comment,
+    });
+  } catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+};
+const unlikePostComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return responseHandler.error(res, 'Post not found', 404);
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      return responseHandler.error(res, 'Comment not found', 404);
+    }
+
+    comment.total_liked -= 1;
+    await post.save();
+
+    responseHandler.ok(res, {
+      message: 'Comment unliked successfully',
+      comment: comment,
+    });
+  } catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
 export default {
   addComment,
   updateComment,
@@ -215,4 +268,6 @@ export default {
   getPostComments,
   addPostComment,
   updatePostComment,
+  likePostComment,
+  unlikePostComment,
 };

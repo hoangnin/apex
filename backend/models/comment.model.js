@@ -18,7 +18,7 @@ var commentSchema = mongoose.Schema({
     author: {
         id: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Account',
+          ref: 'Customer',
           required: true
         },
         name: String,

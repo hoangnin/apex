@@ -136,9 +136,24 @@ const changePassword = async (req, res) => {
     responseHandler.error(res);
   }
 }
-
+const updateInfo = async (req, res) => {
+  try {
+    const { displayName, avatar, phoneNumber } = req.body;
+    const account = await accountModel.findById(req.account.id);
+    account.displayName = displayName;
+    account.avatar = avatar;
+    account.phoneNumber = phoneNumber;
+    await account.save();
+    responseHandler.ok(res, "Cập nhật thông tin thành công !");
+  }
+  catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
 export default { 
   signup,
   login,
-  changePassword
+  changePassword,
+  updateInfo,
 };

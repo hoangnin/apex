@@ -4,38 +4,62 @@ import mongoose, { Schema } from "mongoose";
 const RestaurantSchema = new Schema({
   account: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Account',
+    ref: "Account",
     required: true,
-    unique: true
+    unique: true,
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   location: {
     type: String,
-    required: true
+    required: true,
   },
-  cuisine: {
+  openTime: {
     type: String,
-    
+    required: true,
+  },
+  closeTime: {
+    type: String,
+    required: true,
+  },
+  restaurantStyle: {
+    type: String,
+    required: true,
+  },
+  priceRange: {
+    type: String,
+    required: true,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+  socialMedia: {
+    website: {
+      type: String,
+      required: false,
+    },
+    facebook: {
+      type: String,
+      required: false,
+    },
+    instagram: {
+      type: String,
+      required: false,
+    },
   },
   description: {
     type: String,
-    default: ""
+    default: "",
   },
-  openingHours: {
-    type: String,
-    
-  },
-  closingHours: {
-    type: String,
-    
-  },
-  menu: [{
-    dishName: String,
-    price: Number
-  }]
+  menu: [
+    {
+      dishName: String,
+      price: Number,
+    },
+  ],
 });
 
 const Restaurant = mongoose.model("Restaurant", RestaurantSchema);

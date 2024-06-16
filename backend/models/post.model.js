@@ -32,6 +32,11 @@ const CommentSchema = new Schema({
 
 const postSchema = new Schema(
   {
+    restaurant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Restaurant",
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -42,7 +47,7 @@ const postSchema = new Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Account",
+      ref: "Customer",
       required: true,
     },
     content: [{

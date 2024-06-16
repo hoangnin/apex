@@ -6,12 +6,12 @@ import modelOptions from './model.options.js';
 var ReviewSchema =  mongoose.Schema({
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Account",
+    ref: "Restaurant",
     required: true,
   },
   employee: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Account",
+    ref: "Employee",
     required: true,
   },
   rating: {

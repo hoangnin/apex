@@ -2,6 +2,7 @@ const ROLES_LIST = {
      customer: "CUSTOMER",
      restaurant: "RESTAURANT",
      employee: "EMPLOYEE",
+     admin: "ADMIN",
 }
 
 const ORDER_STATUS = {

@@ -34,7 +34,7 @@ const RestaurantSchema = new Schema({
   },
   active: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   socialMedia: {
     website: {

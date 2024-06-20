@@ -5,6 +5,7 @@ import commentRouter from './comment.route.js';
 import blogRouter from './blog.route.js';
 import postRouter from './post.route.js';
 import voucherRouter from './voucher.route.js';
+import adminRouter from './admin.route.js';
 const router = express.Router();
 
 router.use("/accounts", accountRouter);
@@ -18,5 +19,7 @@ router.use("/blogs", blogRouter);
 router.use("/posts", postRouter);
 
 router.use("/vouchers", voucherRouter);
+
+router.use("/admin", adminRouter);
 
 export default router;

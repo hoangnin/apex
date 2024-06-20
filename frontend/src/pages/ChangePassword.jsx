@@ -3,8 +3,17 @@ import UserSideBar from "../components/common/UserSideBar"
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { Box, Stack, TextField, Typography } from "@mui/material";
+import userApi from "../api/modules/user.api";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 
 const ChangePassword = () => {
+
+   const dispatch = useDispatch();
+   const [errorMessage, setErrorMessage] = useState(undefined);
+   const [isUpdateRequest, setIsUpdateRequest] = useState(false);
+
   const form = useFormik({
     initialValues: {
        password: "",
@@ -23,7 +32,23 @@ const ChangePassword = () => {
           .min(8, "Xác nhận mật khẩu phải có ít nhất 8 ký tự!")
           .required("Cần nhập trường này !")
     }),
-    onSubmit: async values => onUpdate(values)
+    onSubmit: async values => {
+
+      setErrorMessage(undefined);
+      setIsUpdateRequest(true)
+      const { response, err } = await userApi.changePassword(values);
+      setIsUpdateRequest(false)
+
+      if (response) {
+         form.resetForm();
+         dispatch(setUser(response));
+
+         toast.success("Cập nhật mật khẩu thành công !");
+      }
+      if (err) {
+         setErrorMessage(err.message);
+      }
+   }
  });
   return (
     <UserSideBar>
@@ -79,20 +104,24 @@ const ChangePassword = () => {
                   error={form.touched.confirmNewPassword && form.errors.confirmNewPassword !== undefined}
                   helperText={form.touched.confirmNewPassword && form.errors.confirmNewPassword}
                />
-               <Button
-                  type='submit'
-                  fullWidth
-                  size='small'
-                  variant='contained'
-                  sx={{
-                     width: 'fit-content',
-                     margin: '0 auto',
-                     marginTop: 4,
-                     bgcolor: '#01877E',
-                  }}
-               >
-                  Cập nhât
-               </Button>
+              <LoadingButton
+               type='submit'
+               variant='contained'
+               size='small'
+               sx={{
+                  margin: '0 auto',
+                  marginTop: 4,
+                  width: 'fit-content'
+               }}
+               loading={isUpdateRequest}
+            >
+               Cập nhật
+            </LoadingButton>
+            {errorMessage && (
+               <Box sx={{ marginTop: 2 }}>
+                  <Alert severity='error' variant='outlined'>{errorMessage}</Alert>
+               </Box>
+            )}
             </Stack>
          </Box>
     </UserSideBar>

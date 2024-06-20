@@ -4,10 +4,8 @@ import publicClient from "../client/public.client";
 const userEndpoints = {
   login: "accounts/login",
   signup: "accounts/signup",
-  getInfo: "user/info",
-  passwordUpdate: "user/update-password",
-  getFavorites: "user/favorites",
-  addFavorite: "user/favorites",
+  changePassword: "accounts/change-password",
+  
 };
 
 const userApi = {
@@ -18,26 +16,28 @@ const userApi = {
             return { response };
        } catch (err) { return { err } }
   },
-  signup: async ({ username, displayName, phoneNumber, email, password, confirmPassword, role, location }) => {
+  signup: async ({ username, displayName, phoneNumber, email, password, confirmPassword, role, 
+     location, openingHours, closingHours, restaurantName, type , priceRange, rushHours }) => {
        try {
-            // if(role === "PHOTOGRAPHER") {
-            //      const response = await publicClient.post(userEndpoints.signup,
-            //           { username, displayName, phoneNumber, email, password, confirmPassword, role, location })
-            //      return { response };
-            // }else {
+            if(role === "RESTAURANT") {
+                 const response = await publicClient.post(userEndpoints.signup,
+                      { username, displayName, phoneNumber, email, password, confirmPassword, role, location, 
+                         openingHours, closingHours, restaurantName, type , priceRange, rushHours })
+                 return { response };
+            }else {
                  const response = await publicClient.post(userEndpoints.signup,
                       { username, displayName, phoneNumber, email, password, confirmPassword, role })
                  return { response };
-            // }
+            }
            
        } catch (err) { return { err } }
   },
-  // passwordUpdate: async ({ password, newPassword, confirmNewPassword }) => {
-  //      try {
-  //           const response = await privateClient.put(userEndpoints.passwordUpdate, { password, newPassword, confirmNewPassword });
-  //           return { response };
-  //      } catch (err) { return { err } }
-  // },
+  changePassword: async ({ password, newPassword, confirmNewPassword }) => {
+       try {
+            const response = await privateClient.put(userEndpoints.changePassword, { password, newPassword, confirmNewPassword });
+            return { response };
+       } catch (err) { return { err } }
+  },
   // getInfo: async () => {
   //      try {
   //           const response = await privateClient.get(userEndpoints.getInfo);

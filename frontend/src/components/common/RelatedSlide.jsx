@@ -5,27 +5,25 @@ import { toast } from "react-toastify";
 import Data from "../../data/Data";
 import RelatedItem from "./RelatedITem";
 import { Box } from "@mui/material";
+import postApi from "../../api/modules/post.api";
 
 const RelatedSlide = ({ }) => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const getPosts = async () => {
+      const { response, err } = await postApi.getPosts();
+      if (response) setPosts(response);
+      if (err) toast.error(err.message);
+    };
+    getPosts();
+  }, []);
+
   const [medias, setMedias] = useState([]);
-//   useEffect(() => {
-//     const getMedias = async () => {
-//       const { response, err } = await mediaApi.getList({
-//         mediaType,
-//         mediaCategory,
-//         page: 1
-//       });
-
-//       if (response) setMedias(response.results);
-//       if (err) toast.error(err.message);
-//     };
-
-//     getMedias();
-//   }, [mediaType, mediaCategory]);
 
   return (
       <AutoSwiper >
-      {Data.post.slice(0, 4).map((item, index) => (
+      {posts.map((item, index) => (
         <SwiperSlide key={index} >
           <RelatedItem post={item} />
         </SwiperSlide>

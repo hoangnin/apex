@@ -7,6 +7,7 @@ import Blog from "../pages/Blog"
 import Add from "../components/common/Add"
 import AddPost from "../components/common/AddPost"
 import DetailPost from "../pages/DetailPost"
+import Detail from "../pages/Detail"
 
 export const routesGen = {
     home: "/",
@@ -28,9 +29,8 @@ const routes = [
     {
         path: "/profile",
         element: 
-        <ProtectedPage>
+
             <Profile />
-        </ProtectedPage>
         ,
         state: "profile"
     },
@@ -53,8 +53,8 @@ const routes = [
     {
         path: "/history",
         element: <ProtectedPage>
-        <Voucher />
-    </ProtectedPage>,
+                      <Voucher />
+                </ProtectedPage>,   
         state: "history"
     },
     {

@@ -8,7 +8,7 @@ router.get('/', postController.getPosts)
 
 router.post('/', postController.createNewPost);
 
-router.get('/:postId/', postController.getPost)
+router.get('/:postId', postController.getPost)
 
 router.post('/edit', postController.updatePost);
 

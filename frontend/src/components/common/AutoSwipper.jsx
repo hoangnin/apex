@@ -10,13 +10,18 @@ const AutoSwiper = ({ children }) => {
           sm: "35%",
           md: "25%",
           lg: "20.5%"
-        }
-      }
+        },
+      },
+      "& .swiper-wrapper": {
+        display: "flex",
+      },
+      
     }}>
       <Swiper
-        slidesPerView="3"
+
+        slidesPerView="4"
         grabCursor={true}
-        spaceBetween={30}
+        spaceBetween={1}
         style={{ width: "100%", height: "max-content"}}
 
       >

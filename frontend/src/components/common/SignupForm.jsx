@@ -1,31 +1,38 @@
 import { LoadingButton } from "@mui/lab";
-import { Alert, Box, Button, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Alert, Box, Button, MenuItem, Modal, Select, Stack, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import userApi from "../../api/modules/user.api";
 import { setAuthModalOpen } from "../../redux/features/authModalSlice";
 import { setUser } from "../../redux/features/userSlice";
+import Logo from "./Logo";
 
 const SignupForm = ({ switchAuthState }) => {
   const dispatch = useDispatch();
 
   const [isSignUpRequest, setIsSignUpRequest] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const signUpForm = useFormik({
     initialValues: {
-
       username: "",
       displayName: "",
       phoneNumber: "",
       email: "",
       password: "",
       confirmPassword: "",
-      role: ""
-
+      role: "",
+      location: "",
+      openingHours: "",
+      closingHours: "",
+      restaurantName: "",
+      type: "",
+      priceRange: "",
+      rushHours: "",
     },
     validationSchema: Yup.object({
       username: Yup.string()
@@ -47,7 +54,24 @@ const SignupForm = ({ switchAuthState }) => {
         .oneOf([Yup.ref("password")], "ConfirmPassword not match")
         .min(8, "ConfirmPassword minimum 8 characters")
         .required("ConfirmPassword is required"),
-      role: Yup.string().required("Role is required")
+      role: Yup.string().required("Role is required"),
+      location: Yup.string().required("Location is required"),
+      openingHours: Yup.string()
+        .required("OpeningHours is required")
+        .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+      closingHours: Yup.string()
+        .required("ClosingHours is required")
+        .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format"),
+      restaurantName: Yup.string()
+        .required("RestaurantName is required")
+        .min(8, "RestaurantName minimum 8 characters"),
+      type: Yup.string()
+        .required("Type is required")
+        .min(8, "Type minimum 8 characters"),
+      priceRange: Yup.string()
+        .required("PriceRange is required")
+        .min(8, "PriceRange minimum 8 characters"),
+      rushHours: Yup.string().required("RushHours is required"),
     }),
     onSubmit: async values => {
       setErrorMessage(undefined);
@@ -65,6 +89,14 @@ const SignupForm = ({ switchAuthState }) => {
       if (err) setErrorMessage(err.message);
     }
   });
+
+  useEffect(() => {
+    if (signUpForm.values.role === 'RESTAURANT') {
+      setIsModalOpen(true);
+    } else {
+      setIsModalOpen(false);
+    }
+  }, [signUpForm.values.role]);
 
   return (
     <Box component="form" onSubmit={signUpForm.handleSubmit}>
@@ -93,21 +125,30 @@ const SignupForm = ({ switchAuthState }) => {
           error={signUpForm.touched.displayName && signUpForm.errors.displayName !== undefined}
           helperText={signUpForm.touched.displayName && signUpForm.errors.displayName}
         />
-        <TextField type='text' placeholder='Phone number' name='phoneNumber'
-          fullWidth value={signUpForm.values.phoneNumber} onChange={signUpForm.handleChange} color='warning'
+        <TextField
+          type='text'
+          placeholder='Phone number'
+          name='phoneNumber'
+          fullWidth
+          value={signUpForm.values.phoneNumber}
+          onChange={signUpForm.handleChange}
+          color='warning'
           onBlur={signUpForm.handleBlur}
-
           error={signUpForm.touched.phoneNumber && signUpForm.errors.phoneNumber !== undefined}
           helperText={signUpForm.touched.phoneNumber && signUpForm.errors.phoneNumber}
-        >
-        </TextField>
-        <TextField type='email' placeholder='Nhập email' name='email'
-          fullWidth value={signUpForm.values.email} onChange={signUpForm.handleChange} color='warning'
+        />
+        <TextField
+          type='email'
+          placeholder='Enter email'
+          name='email'
+          fullWidth
+          value={signUpForm.values.email}
+          onChange={signUpForm.handleChange}
+          color='warning'
           onBlur={signUpForm.handleBlur}
-
           error={signUpForm.touched.email && signUpForm.errors.email !== undefined}
           helperText={signUpForm.touched.email && signUpForm.errors.email}
-        ></TextField>
+        />
         <TextField
           type="password"
           placeholder="Password"
@@ -132,21 +173,135 @@ const SignupForm = ({ switchAuthState }) => {
           error={signUpForm.touched.confirmPassword && signUpForm.errors.confirmPassword !== undefined}
           helperText={signUpForm.touched.confirmPassword && signUpForm.errors.confirmPassword}
         />
-         <Select
+        <Select
           labelId="role_selection"
           id="role"
           value={signUpForm.values.role}
           onChange={signUpForm.handleChange}
-          placeholder='Select you role'
+          placeholder='Select your role'
           name="role"
           sx={{
             padding: '0',
           }}
         >
           <MenuItem value={"PHOTOGRAPHER"}>Employee</MenuItem>
-          <MenuItem value={"CUSTOMER"}>Restaurant</MenuItem>
+          <MenuItem value={"RESTAURANT"}>Restaurant</MenuItem>
           <MenuItem value={"CUSTOMER"}>Customer</MenuItem>
         </Select>
+        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Box sx={{
+             position: "absolute",
+             top: "50%",
+             left: "50%",
+             transform: "translate(-50%, -50%)",
+             width: "100%",
+             maxWidth: "600px",
+             padding: 4,
+             outline: "none",
+             
+        }}  
+        >
+            <Box
+                sx={{padding: 4,boxShadow:24,backgroundColor: "background.paper",maxHeight: '90vh',
+                overflowY: 'auto',}}
+            >
+                <Box sx={{textAlign: "center", marginBottom: "2rem"}}
+                >
+                    <Logo/>
+                </Box>
+               
+          <Stack spacing={2} sx={{ padding: 4, backgroundColor: 'white', margin: 'auto', marginTop: '10%' }}>
+            <TextField
+              type='text'
+              placeholder='Enter your location'
+              name='location'
+              error={signUpForm.touched.location && signUpForm.errors.location !== undefined}
+              value={signUpForm.values.location}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+              helperText={signUpForm.touched.location && signUpForm.errors.location}
+              label='Location'
+              fullWidth
+            />
+            <TextField
+              type='time'
+              placeholder='Enter opening hours'
+              name='openingHours'
+              value={signUpForm.values.openingHours}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.openingHours && signUpForm.errors.openingHours !== undefined}
+              helperText={signUpForm.touched.openingHours && signUpForm.errors.openingHours}
+              label='OpenTime'
+            />
+            <TextField
+              type='time'
+              placeholder='Enter closing hours'
+              name='closingHours'
+              value={signUpForm.values.closingHours}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.closingHours && signUpForm.errors.closingHours !== undefined}
+              helperText={signUpForm.touched.closingHours && signUpForm.errors.closingHours}
+              label='CloseTime'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter restaurant name'
+              name='restaurantName'
+              value={signUpForm.values.restaurantName}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.restaurantName && signUpForm.errors.restaurantName !== undefined}
+              helperText={signUpForm.touched.restaurantName && signUpForm.errors.restaurantName}
+              label='Restaurant Name'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter your cuisine'
+              name='type'
+              value={signUpForm.values.type}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.type && signUpForm.errors.type !== undefined}
+              helperText={signUpForm.touched.type && signUpForm.errors.type}
+              label='Type'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter price range'
+              name='priceRange'
+              value={signUpForm.values.priceRange}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.priceRange && signUpForm.errors.priceRange !== undefined}
+              helperText={signUpForm.touched.priceRange && signUpForm.errors.priceRange}
+              label='Price Range'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter rush hours'
+              name='rushHours'
+              value={signUpForm.values.rushHours}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.rushHours && signUpForm.errors.rushHours !== undefined}
+              helperText={signUpForm.touched.rushHours && signUpForm.errors.rushHours}
+              label='Rush Hours'
+            />
+            <Button onClick={() => setIsModalOpen(false)}>Next</Button>
+          </Stack>
+            </Box>
+
+        </Box>
+    </Modal>
+        
       </Stack>
 
       <LoadingButton
@@ -170,7 +325,7 @@ const SignupForm = ({ switchAuthState }) => {
 
       {errorMessage && (
         <Box sx={{ marginTop: 2 }}>
-          <Alert severity="error" variant="outlined" >{errorMessage}</Alert>
+          <Alert severity="error" variant="outlined">{errorMessage}</Alert>
         </Box>
       )}
     </Box>

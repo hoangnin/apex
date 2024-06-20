@@ -22,6 +22,8 @@ const HomePage = () => {
     getPosts();
   }, []);
 
+ 
+
   return (
     <Box sx={{
       display: 'flex',

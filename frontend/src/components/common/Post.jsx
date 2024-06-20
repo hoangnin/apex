@@ -80,8 +80,8 @@ const Post = ({ post ,key}) => {
   // };
 
   const navigateToDetailPost = (post) => {
-    console.log(post._id)
-    navigate(`/post/${post._id}`,{ state: { postData: post } });
+    navigate(`/post/${post._id}`,{ state:  {postData: post._id}  });
+    // navigate(`/post/${post._id}`);
   }
   
   // Usage

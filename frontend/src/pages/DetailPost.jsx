@@ -1,9 +1,5 @@
 import { Avatar, Box, Button, Divider, Grid, ImageListItem, MenuItem, Pagination, Select, Typography } from '@mui/material';
-import React, { useState } from 'react'
 import { useLocation } from 'react-router';
-import RelatedSlide from '../components/common/RelatedSlide';
-import Data from '../data/Data';
-import { SwiperSlide, Swiper } from 'swiper/react';
 import RelatedItem from '../components/common/RelatedITem';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
@@ -14,6 +10,15 @@ import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import postApi from '../api/modules/post.api';
+import { toast } from 'react-toastify';
+import { Fragment, useEffect, useState } from 'react';
+import Data from '../data/Data';
+import RelatedSlide from '../components/common/RelatedSlide';
+import { IoMdStar } from "react-icons/io";
+import Review from '../components/common/Review';
+import commentApi from '../api/modules/comment.api';
+
 
 const StyledRating = styled(Rating)(({ theme }) => ({
     '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
@@ -57,16 +62,63 @@ IconContainer.propTypes = {
 const DetailPost = () => {
 
     const location = useLocation();
-    const post = location.state.postData;
-    const [value, setValue] = React.useState("Top comment");
+    const postId = location.state.postData;
+    const [value, setValue] = useState("Top comment");
     const [liked, setLiked] = useState(false);
-    const [quantityLike, setQuantityLike] = useState(post.likeCount);
+    const [quantityLike, setQuantityLike] = useState('');
+    const [postDetails, setPostDetails] = useState({ post: '', formattedDate: '', formattedTime: '', reviews: '' });
 
-    const handleFavoriteClick = () => {
-        setLiked((prevLiked) => !prevLiked);
-        setQuantityLike((prevQuantityLike) =>
-            liked ? prevQuantityLike - 1 : prevQuantityLike + 1
-        );
+    useEffect(() => {
+        const getPost = async () => {
+            const { response, err } = await postApi.getPostById(postId);
+            if (response) {
+                const date = new Date(response.createdAt);
+                const formattedDate = date.toLocaleDateString('en-CA'); // '2024-05-26'
+                const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }); // '09:28'
+                setPostDetails({ post: response, formattedDate, formattedTime });
+                console.log(response);
+            }
+            if (err) toast.error(err.message);
+        };
+        getPost();
+
+    }, [postId]);
+
+    useEffect(() => {
+        const getReviews = async () => {
+            const { response, err } = await postApi.getReviews(postDetails.post.restaurant);
+            if (response) {
+                setPostDetails({ ...postDetails, reviews: response });
+            }
+            if (err) toast.error(err.message);
+        };
+        (postDetails.post && getReviews());
+    }, [postDetails.post.restaurant]);
+    console.log(postDetails.reviews);
+
+    const handleFavoriteClick = async (commentIndex) => {
+        const updatedComments = [...postDetails.post.comments];
+        const updatedComment = { ...updatedComments[commentIndex] };
+    
+        updatedComment.liked = !updatedComment.liked;
+        updatedComment.quantityLike = updatedComment.liked ? updatedComment.quantityLike + 1 : updatedComment.quantityLike - 1;
+    
+        updatedComments[commentIndex] = updatedComment;
+    
+        setPostDetails({
+            ...postDetails,
+            post: {
+                ...postDetails.post,
+                comments: updatedComments
+            }
+        });
+
+
+    
+        // Update the quantity in the database for the specific comment here
+        // You can make an API call to update the quantity for the specific comment
+        // For example:
+        await commentApi.updateComment(updatedComment.id, updatedComment.quantityLike);
     };
 
     const handleChange = (event) => {
@@ -79,7 +131,7 @@ const DetailPost = () => {
             paddingBottom: '10%',
         }}>
             <Box sx={{
-                margin: '0 567px',
+                margin: { md: '0 200px', lg: '0 300px', xl: '0 567px'},
                 padding: '0 24px 12px',
                 // maxWidth: '768px'
             }}>
@@ -89,43 +141,49 @@ const DetailPost = () => {
                     lineHeight: '44px',
                     margin: '32px 0 24px',
                     textWrap: 'balance'
-                }}>{post.title}</Typography>
+                }}>{postDetails.post.title}</Typography>
                 <Typography variant="h2" sx={{
                     fontSize: '28px',
                     fontWeight: 'bold',
                     lineHeight: '24px',
                     marginBottom: '8px'
-                }}>{post.description}</Typography>
+                }}>{postDetails.post.description}</Typography>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
                     margin: '24px 0 48px'
                 }}>
-                    <Avatar src={post.author.avatar} sx={{
+                    <Avatar src={postDetails.post.author && postDetails.post.author.avatar} sx={{
                         width: '48px',
                         height: '48px',
                         marginRight: '16px'
                     }} />
                     <Typography sx={{
-                        fontSize: '14px',
+                        fontSize: '20px',
                         fontWeight: 'bold',
                         lineHeight: '24px',
                         color: '#000000',
                         marginRight: '16px'
-                    }}>{post.author.username}</Typography>
+                    }}>{postDetails.post.author && postDetails.post.author.username}</Typography>
                     <Typography sx={{
                         fontSize: '14px',
                         lineHeight: '24px',
                         color: '#000000'
-                    }}>{post.time}</Typography>
+                    }}>{postDetails.formattedDate}</Typography>
+                    <Typography sx={{
+                        ml: '16px',
+                        fontSize: '14px',
+                        lineHeight: '24px',
+                        color: '#000000'
+                    }}>{postDetails.formattedTime}</Typography>
                 </Box>
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '24px'
                 }}>
-                    {post.content.map((item, index) => (
+                    {postDetails.post.content && postDetails.post.content.map((item, index) => (
                         <>
                             <ImageListItem key={index}>
                                 <img src={item.image} alt={item.descriptions} />
@@ -135,9 +193,9 @@ const DetailPost = () => {
                             </Typography></>
                     ))}
                 </Box>
-                <Typography sx={{ my: '20px', fontSize: '28px', fontWeight: 'bold' }} >Related Posts</Typography>
-                {/* <RelatedSlide/> */}
-                <Grid
+                <Typography sx={{ my: '20px', fontSize: '28px', fontWeight: 'bold' }} >Related posts</Typography>
+                <RelatedSlide />
+                {/* <Grid
                     container
                     spacing={2}
                     sx={{}}
@@ -155,8 +213,30 @@ const DetailPost = () => {
                             <RelatedItem post={item} />
                         </Grid>
                     ))}
-                </Grid>
-                <Box display='flex' justifyContent='space-between' mt='100px' alignItems='center' >
+                </Grid> */}
+                <Box >
+                    <Typography sx={{ my: '20px', fontSize: '28px', fontWeight: 'bold' }} >Reviews</Typography>
+                    <Grid
+                        container
+                        spacing={2}
+                    >
+                        {postDetails.reviews && postDetails.reviews.map((review, index) => (
+                             <Grid
+                             item xs={6} md={6} key={index}
+                             sx={{
+                                 position: "relative",
+                                 height: "12rem",
+                                 height:'auto'
+
+                             }}
+                             index={index}
+                         >
+                             <Review review={review} />
+                         </Grid>
+                       ) )}
+                    </Grid>
+                </Box>
+                <Box display='flex' justifyContent='space-between' alignItems='center' >
                     <Typography sx={{ my: '20px', fontSize: '28px', fontWeight: 'bold' }} >Comments</Typography>
                     <Select
                         labelId="selection"
@@ -166,14 +246,15 @@ const DetailPost = () => {
                         name="selection"
                         sx={{
                             '& .MuiOutlinedInput-notchedOutline': {
-                              border: 'none',
+                                border: 'none',
                             },
-                          }}
+                        }}
                     >
                         <MenuItem value={"Top comment"}>Top comment</MenuItem>
                         <MenuItem value={"Liked"}>Liked</MenuItem>
                     </Select>
                 </Box>
+
                 <Box sx={{
                     mt: '10px',
                     border: '1px solid #E0E0E0',
@@ -181,99 +262,43 @@ const DetailPost = () => {
                     borderRadius: '10px',
                 }}>
 
-                    <Box my='7px' display="flex" >
 
-                        <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" />
+                    {postDetails.post.comments && postDetails.post.comments.map((comment, index) => (
+                        <Fragment key={index}>
+                            <Box my='7px' display="flex" >
 
-                        <Box ml='13px' display="flex" flexDirection="column" justifyContent="center">
-                            <Box display='flex' justifyContent='space-between'>
-                                <Box display='flex' flexDirection='row'>
-                                    <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>John Doe</Typography>
-                                    <StyledRating
-                                        name="highlight-selected-only"
-                                        defaultValue={2}
-                                        IconContainerComponent={IconContainer}
-                                        getLabelText={(value) => customIcons[value].label}
-                                        highlightSelectedOnly
-                                    />
+                                <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src={comment.created_by.avatar} />
+
+                                <Box ml='13px' display="flex" flexDirection="column" justifyContent="center">
+                                    <Box display='flex' justifyContent='space-between'>
+                                        <Box display='flex' flexDirection='row'>
+                                            <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>{comment.created_by.username}</Typography>
+                                            <StyledRating
+                                                name="highlight-selected-only"
+                                                defaultValue={comment.rating}
+                                                IconContainerComponent={IconContainer}
+                                                getLabelText={(value) => customIcons[value].label}
+                                                highlightSelectedOnly
+                                                readOnly
+                                            />
+                                        </Box>
+                                        <Button
+
+                                            variant="text"
+                                            color='inherit'
+                                            startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
+                                            onClick={()=>handleFavoriteClick(index)}
+                                        >    {quantityLike}
+                                        </Button>
+                                    </Box>
+
+                                    <Typography sx={{}}>{comment.content}</Typography>
+
                                 </Box>
-                                <Button
-
-                                    variant="text"
-                                    color='inherit'
-                                    startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
-                                    onClick={handleFavoriteClick}
-                                >    {quantityLike}
-                                </Button>
                             </Box>
-
-                            <Typography sx={{}}>Great post! I love it das ds dsfds dsaf dsf sdf dsf dsa fads fds fdsf sdaf daf dsf sdf sd fdsf  dsf dsf sf dsafdsafadsf asd</Typography>
-
-                        </Box>
-                    </Box>
-                    <Divider />
-                    <Box my='7px' display="flex" >
-
-                        <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" />
-
-                        <Box ml='13px' display="flex" flexDirection="column" justifyContent="center">
-                            <Box display='flex' justifyContent='space-between'>
-                                <Box display='flex' flexDirection='row'>
-                                    <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>John Doe</Typography>
-                                    <StyledRating
-                                        name="highlight-selected-only"
-                                        defaultValue={2}
-                                        IconContainerComponent={IconContainer}
-                                        getLabelText={(value) => customIcons[value].label}
-                                        highlightSelectedOnly
-                                    />
-                                </Box>
-                                <Button
-
-                                    variant="text"
-                                    color='inherit'
-                                    startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
-                                    onClick={handleFavoriteClick}
-                                >    {quantityLike}
-                                </Button>
-                            </Box>
-
-                            <Typography sx={{}}>Great post! I love it das ds dsfds dsaf dsf sdf dsf dsa fads fds fdsf sdaf daf dsf sdf sd fdsf  dsf dsf sf dsafdsafadsf asd</Typography>
-
-                        </Box>
-                    </Box>
-                    <Divider />
-                    <Box my='7px' display="flex" >
-
-                        <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" />
-
-                        <Box ml='13px' display="flex" flexDirection="column" justifyContent="center">
-                            <Box display='flex' justifyContent='space-between'>
-                                <Box display='flex' flexDirection='row'>
-                                    <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>John Doe</Typography>
-                                    <StyledRating
-                                        name="highlight-selected-only"
-                                        defaultValue={2}
-                                        IconContainerComponent={IconContainer}
-                                        getLabelText={(value) => customIcons[value].label}
-                                        highlightSelectedOnly
-                                    />
-                                </Box>
-                                <Button
-
-                                    variant="text"
-                                    color='inherit'
-                                    startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
-                                    onClick={handleFavoriteClick}
-                                >    {quantityLike}
-                                </Button>
-                            </Box>
-
-                            <Typography sx={{}}>Great post! I love it das ds dsfds dsaf dsf sdf dsf dsa fads fds fdsf sdaf daf dsf sdf sd fdsf  dsf dsf sf dsafdsafadsf asd</Typography>
-
-                        </Box>
-                    </Box>
-
+                            {index !== postDetails.post.comments.length - 1 && <Divider />}
+                        </Fragment>
+                    ))}
 
 
                 </Box>

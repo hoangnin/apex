@@ -20,7 +20,6 @@ const getPost = async (req, res) => {
   try {
     const post = await postModel.findById(req.params.postId)
       .populate('author', 'username _id avatar')
-      .populate('restaurant', 'name _id avatar')
       .populate('comments.created_by', 'username _id avatar');
     responseHandler.ok(res, post);
   } catch (error) {

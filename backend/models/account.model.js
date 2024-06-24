@@ -2,8 +2,6 @@ import mongoose from 'mongoose';
 import modelOptions from './model.options.js';
 import crypto from 'crypto';
 import { ROLES_LIST } from '../config/enum.config.js';
-// import customerModel from './customer.model.js';
-// import photographerModel from './photographer.model.js';
 
 const accountSchema = new mongoose.Schema({
      username: {
@@ -57,7 +55,10 @@ accountSchema.methods.validatePassword = function (password) {
 };
 
 accountSchema.methods.hashPassword = function (password) {
-
+     if (!this.salt) {
+          console.log("salt"+ this.salt);
+          throw new Error('Salt is not defined for this account.');
+      }     
      return crypto.pbkdf2Sync(password, this.salt, 1000, 64, "sha512").toString('hex');
 };
 

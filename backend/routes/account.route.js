@@ -4,8 +4,6 @@ import accountController from '../controllers/account.controller.js';
 import accountModel from '../models/account.model.js';
 import tokenMiddleware from '../middlewares/token.middleware.js';
 import requestHandler from '../handlers/request.handler.js';
-// import favoriteController from '../controllers/favorite.controller.js';
-
 const router = express.Router({ mergeParams: true });
 
 router.post(
@@ -66,6 +64,14 @@ router.post(
 );
 router.post(
      "/change-password",
+     tokenMiddleware.authenticate,
+     
+     requestHandler.validate,
+     accountController.changePassword,
+)
+
+router.post(
+     '/forgot-password',
      body("username")
           .exists().withMessage("Username is required !")
           .isLength({ min: 8 }).withMessage("Username must be at least 8 characters !"),
@@ -83,57 +89,15 @@ router.post(
                return true;
           }),
      requestHandler.validate,
-     accountController.changePassword,
+     accountController.forgotPassword,
+
 )
-
-// router.put("/update-password",
-//      tokenMiddleware.authenticate,
-//      body('password')
-//           .exists().withMessage("Password is required !")
-//           .isLength({ min: 8 }).withMessage("Password must be greater then 8 characters !"),
-//      body('newPassword')
-//           .exists().withMessage("New password is required !")
-//           .isLength({ min: 8 }).withMessage("New Password must be greater then 8 characters !"),
-//      body('confirmNewPassword')
-//           .exists().withMessage("Confirm new password is required !")
-//           .isLength({ min: 8 }).withMessage("Confirm new password must be greater then 8 characters !")
-//           .custom((value, { req }) => {
-//                if (value !== req.body.newPassword) throw new Error("Confirm new password not match !")
-//                return true;
-//           }),
-//      requestHandler.validate,
-//      accountController.updatePassword
-// );
-
-// router.get("/info",
-//      tokenMiddleware.authenticate,
-//      accountController.getInfo
-// );
-
 router.put("/update-info",
      tokenMiddleware.authenticate,
      accountController.updateInfo
 );
 
 
-// router.get(
-//      "/favorites",
-//      tokenMiddleware.authenticate,
-//      favoriteController.getFavoritesOfUser
-// );
-
-// router.post(
-//      "/favorites",
-//      tokenMiddleware.authenticate,
-//      requestHandler.validate,
-//      favoriteController.addFavorite
-// );
-
-// router.delete(
-//      "/favorites/:favoriteId",
-//      tokenMiddleware.authenticate,
-//      favoriteController.removeFavorite
-// );
 
 
 export default router;

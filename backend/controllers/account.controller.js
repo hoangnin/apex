@@ -91,7 +91,6 @@ const login = async (req, res, next) => {
     const account = await accountModel.findOne({ username })
       .select("id username displayName password salt phoneNumber email role avatar");
 
-
     // if (account.role === ROLES_LIST.photographer) {
     //   const photographer = await photographerModel.findOne({ account: account.id })
     //     .select("location status gender age description experienceYears bookingCount type_of_account");
@@ -131,8 +130,28 @@ const login = async (req, res, next) => {
 const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const account = await accountModel.findById(req.account.id);
+    const account = await accountModel.findById(req.account.id).select("password salt");
     if (!account.validatePassword(oldPassword)) {
+      return responseHandler.badRequest(res, "Mật khẩu cũ không chính xác !");
+    }
+    account.setPassword(newPassword);
+    await account.save();
+    responseHandler.ok(res, "Đổi mật khẩu thành công !");
+  }
+  catch (error) {
+    console.log("here", error)
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
+const forgotPassword = async (req, res) => {
+  try {
+    const { username, password, newPassword } = req.body;
+    const account = await accountModel.findOne({username}).select("password salt");
+    if (!account) {
+      return responseHandler.notfound(res, "Tài khoản không tồn tại !");
+    }
+    if (!account.validatePassword(password)) {
       return responseHandler.badRequest(res, "Mật khẩu cũ không chính xác !");
     }
     account.setPassword(newPassword);
@@ -164,4 +183,5 @@ export default {
   login,
   changePassword,
   updateInfo,
+  forgotPassword,
 };

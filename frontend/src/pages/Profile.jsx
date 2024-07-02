@@ -1,5 +1,5 @@
 import UserSideBar from "../components/common/UserSideBar"
-import { Box, Button, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Box, Button, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
@@ -9,28 +9,35 @@ import FormControl from '@mui/material/FormControl';
 import { Fragment, useEffect, useState } from "react";
 import AvatarUploader from "../components/common/AvatarUploader";
 import Data from "../data/Data";
+import { LoadingButton } from "@mui/lab";
+import userApi from "../api/modules/user.api";
+import { setUser } from "../redux/features/userSlice";
+import { toast } from "react-toastify";
+
 
 const Profile = () => {
 
     const { user } = useSelector(state => state.user);
     // const user = Data.user[1];
-    // const [avatarUrl, setAvatarUrl] = useState('');
+    const [errorMessage, setErrorMessage] = useState(undefined);
+   const [isUpdateRequest, setIsUpdateRequest] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState('');
 
 
 
 
-    // useEffect(() => {
-    //     setAvatarUrl(user.avatar);
+    useEffect(() => {
+        setAvatarUrl(user.avatar);
 
-    // }, []);
+    }, []);
 
-    // const handleAvatarUpload = async (avatarLink) => {
-    //     console.log(avatarLink)
-    //     setAvatarUrl(avatarLink);
-    // }
+    const handleAvatarUpload = async (avatarLink) => {
+        console.log(avatarLink)
+        setAvatarUrl(avatarLink);
+    }
 
 
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
 
     const profileForm = useFormik({
         initialValues: {
@@ -54,13 +61,27 @@ const Profile = () => {
             email: Yup.string()
                 .email()
                 .required("Email is required !"),
-            location: Yup.string().required("Location is required."),
-            cuisine: Yup.string().required("Cuisine is required."),
-            description: Yup.string().required("Description is required."),
-            
+            // location: Yup.string().required("Location is required."),
+            // cuisine: Yup.string().required("Cuisine is required."),
+            // description: Yup.string().required("Description is required."),
+
         }),
         enableReinitialize: true,
         onSubmit: async values => {
+            setErrorMessage(undefined);
+            setIsUpdateRequest(true)
+            // values.avatar = avatarUrl;
+            const { response, err } = await userApi.updateInfo(values);
+            setIsUpdateRequest(false)
+
+            if (response) {
+                dispatch(setUser(response));
+
+                toast.success("Cập nhật thông tin thành công !");
+            }
+            if (err) {
+                setErrorMessage(err.message);
+            }
         }
     })
     return (
@@ -79,8 +100,8 @@ const Profile = () => {
                     fontWeight: "600",
                     color: 'white'
                 }}>Cập nhật thông tin</Typography>
-                <AvatarUploader />
-                {/* <AvatarUploader handleUpload={handleAvatarUpload} avatar={user.avatar} /> */}
+                {/* <AvatarUploader /> */}
+                <AvatarUploader handleUpload={handleAvatarUpload} avatar={user.avatar} />
 
                 <Box component="form" onSubmit={profileForm.handleSubmit}
                     sx={{
@@ -115,7 +136,7 @@ const Profile = () => {
                             label='Email'
                         >
                         </TextField>
-                        
+
                         {user.role === 'RESTAURANT' && (
                             <Fragment >
                                 <TextField type='text' placeholder='Enter your location' name='location'
@@ -126,7 +147,7 @@ const Profile = () => {
                                 >
                                 </TextField>
 
-                                <TextField type='text' placeholder='Enter your cuisine' name='cuisine' 
+                                <TextField type='text' placeholder='Enter your cuisine' name='cuisine'
                                     value={profileForm.values.age} onChange={profileForm.handleChange}
                                     error={profileForm.touched.age && profileForm.errors.age !== undefined}
                                     helperText={profileForm.touched.age && profileForm.errors.age}
@@ -141,7 +162,7 @@ const Profile = () => {
                                     label='Mô Tả Về Bạn'
                                 />
                                 <TextField type='time' placeholder='Enter opening hours' name='openingHours'
-                                    value={profileForm.values.openingHours } onChange={profileForm.handleChange}
+                                    value={profileForm.values.openingHours} onChange={profileForm.handleChange}
                                     error={profileForm.touched.openingHours && profileForm.errors.openingHours !== undefined}
                                     helperText={profileForm.touched.openingHours && profileForm.errors.openingHours}
                                     label='Giờ Mở Cửa'
@@ -150,24 +171,30 @@ const Profile = () => {
                                     value={profileForm.values.closingHours} onChange={profileForm.handleChange}
                                     error={profileForm.touched.closingHours && profileForm.errors.closingHours !== undefined}
                                     helperText={profileForm.touched.closingHours && profileForm.errors.closingHours}
-                                    label='Giờ Đóng Cửa'/>
-                                
+                                    label='Giờ Đóng Cửa' />
+
                             </Fragment>
                         )}
                     </Stack>
-                    <Button
+                    <LoadingButton
                         type='submit'
                         variant='contained'
                         size='small'
                         sx={{
                             margin: '0 auto',
                             marginTop: 4,
-                            width: 'fit-content',
-                            bgcolor: '#01877E',
+                            width: 'fit-content'
                         }}
+                        loading={isUpdateRequest}
                     >
                         Cập nhật
-                    </Button>
+                    </LoadingButton>
+
+                    {errorMessage && (
+                        <Box sx={{ marginTop: 2 }}>
+                            <Alert severity='error' variant='outlined'>{errorMessage}</Alert>
+                        </Box>
+                    )}
                 </Box>
             </UserSideBar>
         </>

@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 import UserSideBar from "../components/common/UserSideBar"
 import { useFormik } from "formik";
 import * as Yup from 'yup';
@@ -36,7 +36,7 @@ const ChangePassword = () => {
 
       setErrorMessage(undefined);
       setIsUpdateRequest(true)
-      const { response, err } = await userApi.changePassword(values);
+      const { response, err } = await userApi.updatePassword(values);
       setIsUpdateRequest(false)
 
       if (response) {

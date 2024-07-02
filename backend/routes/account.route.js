@@ -64,46 +64,46 @@ router.post(
      accountController.login,
      
 );
-router.post(
-     "/change-password",
-     body("username")
-          .exists().withMessage("Username is required !")
-          .isLength({ min: 8 }).withMessage("Username must be at least 8 characters !"),
-     body("password")
-          .exists().withMessage("Password is required !")
-          .isLength({ min: 8 }).withMessage("Password must be at least 8 characters !"),
-     body("newPassword")
-          .exists().withMessage("New password is required !")
-          .isLength({ min: 8 }).withMessage("New password must be at least 8 characters !"),
-     body("confirmNewPassword")
-          .exists().withMessage("Confirm new password is required !")
-          .isLength({ min: 8 }).withMessage("Confirm new password must be at least 8 characters !")
-          .custom((value, { req }) => {
-               if (value !== req.body.newPassword) throw new Error("Confirm new password dose not match!")
-               return true;
-          }),
-     requestHandler.validate,
-     accountController.changePassword,
-)
-
-// router.put("/update-password",
-//      tokenMiddleware.authenticate,
-//      body('password')
+// router.post(
+//      "/change-password",
+//      body("username")
+//           .exists().withMessage("Username is required !")
+//           .isLength({ min: 8 }).withMessage("Username must be at least 8 characters !"),
+//      body("password")
 //           .exists().withMessage("Password is required !")
-//           .isLength({ min: 8 }).withMessage("Password must be greater then 8 characters !"),
-//      body('newPassword')
+//           .isLength({ min: 8 }).withMessage("Password must be at least 8 characters !"),
+//      body("newPassword")
 //           .exists().withMessage("New password is required !")
-//           .isLength({ min: 8 }).withMessage("New Password must be greater then 8 characters !"),
-//      body('confirmNewPassword')
+//           .isLength({ min: 8 }).withMessage("New password must be at least 8 characters !"),
+//      body("confirmNewPassword")
 //           .exists().withMessage("Confirm new password is required !")
-//           .isLength({ min: 8 }).withMessage("Confirm new password must be greater then 8 characters !")
+//           .isLength({ min: 8 }).withMessage("Confirm new password must be at least 8 characters !")
 //           .custom((value, { req }) => {
-//                if (value !== req.body.newPassword) throw new Error("Confirm new password not match !")
+//                if (value !== req.body.newPassword) throw new Error("Confirm new password dose not match!")
 //                return true;
 //           }),
 //      requestHandler.validate,
-//      accountController.updatePassword
-// );
+//      accountController.changePassword,
+// )
+
+router.put("/change-password",
+     tokenMiddleware.authenticate,
+     body('password')
+          .exists().withMessage("Password is required !")
+          .isLength({ min: 8 }).withMessage("Password must be greater then 8 characters !"),
+     body('newPassword')
+          .exists().withMessage("New password is required !")
+          .isLength({ min: 8 }).withMessage("New Password must be greater then 8 characters !"),
+     body('confirmNewPassword')
+          .exists().withMessage("Confirm new password is required !")
+          .isLength({ min: 8 }).withMessage("Confirm new password must be greater then 8 characters !")
+          .custom((value, { req }) => {
+               if (value !== req.body.newPassword) throw new Error("Confirm new password not match !")
+               return true;
+          }),
+     requestHandler.validate,
+     accountController.changePassword
+);
 
 // router.get("/info",
 //      tokenMiddleware.authenticate,

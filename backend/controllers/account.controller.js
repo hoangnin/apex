@@ -33,17 +33,18 @@ const signup = async (req, res) => {
     let restaurant = null;
     let employee = null;
     if (role === ROLES_LIST.restaurant) {
-      const { location, restaurant_name, open_time, close_time, restaurant_style, price_range,
+      
+      const { location, restaurantName, openingHours, closingHours, type, priceRange,
         website, facebook, instagram, description, menu
         } = req.body;
       restaurant = new Restaurant({
         account: account.id,
-        name: restaurant_name,
+        name: restaurantName,
         location: location,
-        openTime: open_time,
-        closeTime: close_time,
-        restaurantStyle: restaurant_style,
-        priceRange: price_range,
+        openTime: openingHours,
+        closeTime: closingHours,
+        restaurantStyle: type,
+        priceRange: priceRange,
         socialMedia: {
           website,
           facebook,

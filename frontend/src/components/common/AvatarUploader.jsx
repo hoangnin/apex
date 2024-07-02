@@ -3,37 +3,40 @@ import React, { useCallback, useState, useEffect } from 'react'
 
 import { useDropzone } from 'react-dropzone';
 import { FiUploadCloud } from "react-icons/fi";
+import uploadImageApi from '../../api/modules/upload.api';
 // import uploadImageApi from "../../api/modules/upload.api";
 
 
-const AvatarUploader = ({ }) => {
+const AvatarUploader = ({handleUpload,avatar }) => {
 
 
-   // const [avatarUrl, setAvatarUrl] = useState('');
+   const [avatarUrl, setAvatarUrl] = useState('');
    const [isUploading, setIsUploading] = useState(false);
 
-   // useEffect(() => {
-   //    setAvatarUrl(avatar);
-   // }, [avatar])
+   useEffect(() => {
+      setAvatarUrl(avatar);
+   }, [avatar])
 
 
-   // const onDrop = useCallback(async (acceptedFiles) => {
-   //    const avatar = new FormData();
-   //    avatar.append('avatar', acceptedFiles[0]);
+   const onDrop = useCallback(async (acceptedFiles) => {
+      const avatar = new FormData();
+      avatar.append('avatar', acceptedFiles[0]);
 
-   //    setIsUploading(true);
-   //    const avatarLink = await uploadImageApi.uploadAvatar(avatar);
-   //    setAvatarUrl(avatarLink);
-   //    setIsUploading(false);
-   //    handleUpload(avatarLink);
-   // }, []);
+      setIsUploading(true);
+      const avatarLink = await uploadImageApi.uploadAvatar(avatar);
+      setAvatarUrl(avatarLink);
+      setIsUploading(false);
+      handleUpload(avatarLink);
+   }, []);
 
 
    const { getRootProps, getInputProps } = useDropzone({
-      accept: 'image/jpeg, image/png',
-      multiple: 'false',
-      ondrop
-   });
+      onDrop,
+      accept: {
+       'image/*': ['.jpeg', '.jpg', '.png'],
+      },
+      maxSize: 1024*1000
+    });
 
    return (
       <Stack flexDirection={{ sx: 'column', md: 'row' }} gap={'10px'} justifyContent={'space-between'}>
@@ -97,7 +100,7 @@ const AvatarUploader = ({ }) => {
             </Box>
          </Box >
 
-         {/* {avatarUrl && <Box sx={{
+         {avatarUrl && <Box sx={{
             width: { sx: '100%', md: '30%' },
             borderRadius: '10px',
             border: '2px solid #000',
@@ -107,7 +110,7 @@ const AvatarUploader = ({ }) => {
             backgroundImage: `url(${avatarUrl})`,
             boxShadow: '0 0 10px rgba(0,0,0,0.5)'
          }} />
-         } */}
+         }
       </Stack>
    )
 }

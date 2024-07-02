@@ -32,7 +32,7 @@ const SignupForm = ({ switchAuthState }) => {
       restaurantName: "",
       type: "",
       priceRange: "",
-      rushHours: "",
+      // rushHours: "",
     },
     validationSchema: Yup.object({
       username: Yup.string()
@@ -55,50 +55,34 @@ const SignupForm = ({ switchAuthState }) => {
         .min(8, "ConfirmPassword minimum 8 characters")
         .required("ConfirmPassword is required"),
       role: Yup.string().required("Role is required"),
-      location: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("Location is required")
-        }),
-      openingHours: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("OpeningHours is required")
-            .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format")
-        }),
-        
-      closingHours: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("ClosingHours is required")
-            .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format")
-        }),
-     
-      restaurantName: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("RestaurantName is required")
-            .min(8, "RestaurantName minimum 8 characters")
-        }),
-      
-      type: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("Type is required")
-            .min(8, "Type minimum 8 characters")
-        }),
-     
-      priceRange: Yup.string().
-        when('role', {
-          is: 'RESTAURANT',
-          then: Yup.string().required("PriceRange is required")
-        }),
-     
-      rushHours: Yup.string(). 
-      when('role', {
-        is: 'RESTAURANT',
-        then: Yup.string().required("RushHours is required")
+      location: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("Location is required")
       }),
+      openingHours: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("OpeningHours is required")
+          .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format")
+      }),
+      closingHours: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("ClosingHours is required")
+          .matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format")
+      }),
+      restaurantName: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("RestaurantName is required")
+      }),
+      type: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("Type is required")
+      }),
+      priceRange: Yup.string().when('role', {
+        is: (role) => role === 'RESTAURANT',
+        then: () => Yup.string().required("PriceRange is required")
+      })
+
+
     }),
     onSubmit: async values => {
       setErrorMessage(undefined);
@@ -205,17 +189,95 @@ const SignupForm = ({ switchAuthState }) => {
           id="role"
           value={signUpForm.values.role}
           onChange={signUpForm.handleChange}
-          placeholder='Select your role'
           name="role"
           sx={{
             padding: '0',
+
           }}
         >
-          <MenuItem value={"PHOTOGRAPHER"}>Employee</MenuItem>
+          <MenuItem value={"EMPLOYEE"}>Employee</MenuItem>
           <MenuItem value={"RESTAURANT"}>Restaurant</MenuItem>
           <MenuItem value={"CUSTOMER"}>Customer</MenuItem>
         </Select>
-        {signUpForm.values.role === 'RESTAURANT' && (<Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+
+        {signUpForm.values.role && signUpForm.values.role === 'RESTAURANT' && (
+          <>
+
+            <TextField
+              type='text'
+              placeholder='Enter your location'
+              name='location'
+              error={signUpForm.touched.location && signUpForm.errors.location !== undefined}
+              value={signUpForm.values.location}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+              helperText={signUpForm.touched.location && signUpForm.errors.location}
+              label='Location'
+              fullWidth
+            />
+            <TextField
+              type='time'
+              placeholder='Enter opening hours'
+              name='openingHours'
+              value={signUpForm.values.openingHours}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+              error={signUpForm.touched.openingHours && signUpForm.errors.openingHours !== undefined}
+              helperText={signUpForm.touched.openingHours && signUpForm.errors.openingHours}
+              label='OpenTime' 
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              type='time'
+              placeholder='Enter closing hours'
+              name='closingHours'
+              value={signUpForm.values.closingHours}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+              error={signUpForm.touched.closingHours && signUpForm.errors.closingHours !== undefined}
+              helperText={signUpForm.touched.closingHours && signUpForm.errors.closingHours}
+              label='CloseTime' 
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              type='text'
+              placeholder='Enter restaurant name'
+              name='restaurantName'
+              value={signUpForm.values.restaurantName}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.restaurantName && signUpForm.errors.restaurantName !== undefined}
+              helperText={signUpForm.touched.restaurantName && signUpForm.errors.restaurantName}
+              label='Restaurant Name'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter your cuisine'
+              name='type'
+              value={signUpForm.values.type}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.type && signUpForm.errors.type !== undefined}
+              helperText={signUpForm.touched.type && signUpForm.errors.type}
+              label='Type'
+            />
+            <TextField
+              type='text'
+              placeholder='Enter price range'
+              name='priceRange'
+              value={signUpForm.values.priceRange}
+              onChange={signUpForm.handleChange}
+              onBlur={signUpForm.handleBlur}
+
+              error={signUpForm.touched.priceRange && signUpForm.errors.priceRange !== undefined}
+              helperText={signUpForm.touched.priceRange && signUpForm.errors.priceRange}
+              label='Price Range'
+            />
+          </>
+        )}
+        {/* <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <Box sx={{
             position: "absolute",
             top: "50%",
@@ -312,28 +374,15 @@ const SignupForm = ({ switchAuthState }) => {
                   helperText={signUpForm.touched.priceRange && signUpForm.errors.priceRange}
                   label='Price Range'
                 />
-                <TextField
-                  type='text'
-                  placeholder='Enter rush hours'
-                  name='rushHours'
-                  value={signUpForm.values.rushHours}
-                  onChange={signUpForm.handleChange}
-                  onBlur={signUpForm.handleBlur}
 
-                  error={signUpForm.touched.rushHours && signUpForm.errors.rushHours !== undefined}
-                  helperText={signUpForm.touched.rushHours && signUpForm.errors.rushHours}
-                  label='Rush Hours'
-                />
-                <Button onClick={() => setIsModalOpen(false)}>Next</Button>
+                <Button onClick={() => 
+                  setIsModalOpen(false)}>Next</Button>
               </Stack>
             </Box>
 
           </Box>
-        </Modal>)}
-
-
+        </Modal> */}
       </Stack>
-
       <LoadingButton
         type="submit"
         fullWidth

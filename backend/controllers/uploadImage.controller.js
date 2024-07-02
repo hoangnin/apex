@@ -8,6 +8,7 @@ const storage = getStorage();
 const uploadAvatar = async (req, res) => {
      try {
           const file = req.file;
+          console.log(file);
           const dateTime = giveCurrentDateTime();
 
           const storageRef = ref(storage, `avatars/${file.originalname + "       " + dateTime}`);
@@ -22,7 +23,7 @@ const uploadAvatar = async (req, res) => {
 
           responseHandler.ok(res, downloadURL);
      } catch (error) {
-          // console.log(error)
+          console.log(error)
           responseHandler.error(res, { message: 'Upload avatar error !' })
      }
 }

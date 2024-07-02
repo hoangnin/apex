@@ -31,7 +31,7 @@ const HomePage = () => {
       mt: '82px'
     }}>
       <Box sx={{
-        flex: 2,
+       flex:{ xs: 0, md: 2 },
         display: {
           xs: 'none', md: 'block',
 
@@ -99,7 +99,7 @@ const HomePage = () => {
         })}
       </Box>
       <Box sx={{
-        flex: 2
+        flex: { xs: 0, md: 2 }
       }}>
 
       </Box>

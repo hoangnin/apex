@@ -1,7 +1,8 @@
 import { Avatar, Box, Typography } from '@mui/material'
 import React from 'react'
 import { IoMdStar } from 'react-icons/io'
-
+import ShowMore from 'react-show-more';
+import ReadMoreReadLess from 'react-read-more-read-less';
 const Review = ({ review }) => {
 
   return (
@@ -21,7 +22,14 @@ const Review = ({ review }) => {
           ))}
         </Box>
         <Typography sx={{ fontWeight: 'bold' }}>{review.employee && review.employee.username}</Typography>
-        <Typography sx={{}}>{review.overView}</Typography>
+       <Typography sx={{}}> <ReadMoreReadLess
+              charLimit={60}
+              readMoreText="Read more"
+              readLessText="Read less"
+            anchorClass=''
+          >
+         {String(review.overView)}
+        </ReadMoreReadLess></Typography>
       </Box>
     </Box>
   )

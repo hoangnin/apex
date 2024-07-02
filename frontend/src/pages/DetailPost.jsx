@@ -269,8 +269,8 @@ const DetailPost = () => {
 
                                 <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src={comment.created_by.avatar} />
 
-                                <Box ml='13px' display="flex" flexDirection="column" justifyContent="center">
-                                    <Box display='flex' justifyContent='space-between'>
+                                <Box width='100%' ml='13px' display="flex" flexDirection="column" justifyContent="center">
+                                    <Box display='flex' justifyContent='space-between' alignItems='center'>
                                         <Box display='flex' flexDirection='row'>
                                             <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>{comment.created_by.username}</Typography>
                                             <StyledRating

@@ -1,7 +1,6 @@
 import { Avatar, Box, Typography } from '@mui/material'
 import React from 'react'
 import { IoMdStar } from 'react-icons/io'
-import ShowMore from 'react-show-more';
 import ReadMoreReadLess from 'react-read-more-read-less';
 const Review = ({ review }) => {
 

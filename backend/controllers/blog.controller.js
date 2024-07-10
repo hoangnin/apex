@@ -1,7 +1,7 @@
 import { get } from "mongoose";
 import responseHandler from "../handlers/response.handler.js";
 import blogModel from "../models/blog.model.js";
-
+import accountModel from "../models/account.model.js";
 
 const createNewBlog = async (req, res) => {
   try {
@@ -26,8 +26,9 @@ const createNewBlog = async (req, res) => {
 
 const getBlogs = async (req, res) => {
   try {
-    const blogs = await blogModel.find().populate("customer");
-    responseHandler.ok(res, blogs);
+    const blogs = await blogModel.find();
+    const convertedBlogs = await convertBlog(blogs); 
+    responseHandler.ok(res, convertedBlogs);
   } catch (error) {
     console.error(error);
     console.log("Error in get blogs: ", error.message);
@@ -35,10 +36,40 @@ const getBlogs = async (req, res) => {
   }
 };
 
+const convertBlog = async (blogs) => { 
+  try {
+    const convertedBlogs = await Promise.all(blogs.map(async (blog) => {
+      const customer = await accountModel.findById(blog.customer);
+      console.log("Customer: ", customer);
+      return {
+        ...blog._doc,
+        customer: customer ? customer._doc : null,
+      };
+    }));
+    return convertedBlogs; 
+  } catch (error) {
+    console.error("Error converting blogs: ", error.message);
+    throw error; 
+  }
+};
+
+
 const getBlog = async (req, res) => {
   try {
     const blog = await blogModel.findById(req.params.blogId);
-    responseHandler.ok(res, blog);
+    if (!blog) {
+      return responseHandler.notFound(res);
+    }
+    const customer = await accountModel.findById(blog.customer);
+    if (!customer) {
+      return responseHandler.notFound(res, "Customer not found");
+    }
+    const blogWithCustomer = {
+      ...blog.toObject(), 
+      customer: customer.toObject() 
+    };
+
+    responseHandler.ok(res, blogWithCustomer);
   } catch (error) {
     console.error(error);
     console.log("Error in get blog: ", error.message);

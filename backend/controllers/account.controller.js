@@ -24,19 +24,28 @@ const signup = async (req, res) => {
       role:
         role === ROLES_LIST.restaurant
           ? ROLES_LIST.restaurant
-          : (role === ROLES_LIST.employee
-            ? ROLES_LIST.employee
-            : ROLES_LIST.customer),
+          : role === ROLES_LIST.employee
+          ? ROLES_LIST.employee
+          : ROLES_LIST.customer,
     });
     account.setPassword(password);
     await account.save();
     let restaurant = null;
     let employee = null;
     if (role === ROLES_LIST.restaurant) {
-      
-      const { location, restaurantName, openingHours, closingHours, type, priceRange,
-        website, facebook, instagram, description, menu
-        } = req.body;
+      const {
+        location,
+        restaurantName,
+        openingHours,
+        closingHours,
+        type,
+        priceRange,
+        website,
+        facebook,
+        instagram,
+        description,
+        menu,
+      } = req.body;
       restaurant = new Restaurant({
         account: account.id,
         name: restaurantName,
@@ -54,13 +63,13 @@ const signup = async (req, res) => {
         menu: [],
       });
       await restaurant.save();
-    }else if (role === ROLES_LIST.employee) {
+    } else if (role === ROLES_LIST.employee) {
       // const { location, employee_name } = req.body;
       employee = new employeeModel({
         account: account.id,
       });
       await employee.save();
-    }else {
+    } else {
       const customer = new customerModel({
         account: account.id,
       });
@@ -83,14 +92,16 @@ const signup = async (req, res) => {
   }
 };
 
-
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const userData = {};
 
-    const account = await accountModel.findOne({ username })
-      .select("id username displayName password salt phoneNumber email role avatar");
+    const account = await accountModel
+      .findOne({ username })
+      .select(
+        "id username displayName password salt phoneNumber email role avatar"
+      );
 
     // if (account.role === ROLES_LIST.photographer) {
     //   const photographer = await photographerModel.findOne({ account: account.id })
@@ -105,9 +116,11 @@ const login = async (req, res, next) => {
     //   userData.type_of_account = photographer.type_of_account;
     // }
 
-    if (account == null) return responseHandler.notfound(res, "Tài khoản không tìm thấy !");
+    if (account == null)
+      return responseHandler.notfound(res, "Tài khoản không tìm thấy !");
 
-    if (!account.validatePassword(password)) return responseHandler.badRequest(res, "Sai mật khẩu !");
+    if (!account.validatePassword(password))
+      return responseHandler.badRequest(res, "Sai mật khẩu !");
 
     const token = createToken(account.id);
 
@@ -131,24 +144,27 @@ const login = async (req, res, next) => {
 const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const account = await accountModel.findById(req.account.id).select("password salt");
+    const account = await accountModel
+      .findById(req.account.id)
+      .select("password salt");
     if (!account.validatePassword(oldPassword)) {
       return responseHandler.badRequest(res, "Mật khẩu cũ không chính xác !");
     }
     account.setPassword(newPassword);
     await account.save();
     responseHandler.ok(res, "Đổi mật khẩu thành công !");
-  }
-  catch (error) {
-    console.log("here", error)
+  } catch (error) {
+    console.log("here", error);
     console.error(error);
     responseHandler.error(res);
   }
-}
+};
 const forgotPassword = async (req, res) => {
   try {
     const { username, password, newPassword } = req.body;
-    const account = await accountModel.findOne({username}).select("password salt");
+    const account = await accountModel
+      .findOne({ username })
+      .select("password salt");
     if (!account) {
       return responseHandler.notfound(res, "Tài khoản không tồn tại !");
     }
@@ -158,19 +174,30 @@ const forgotPassword = async (req, res) => {
     account.setPassword(newPassword);
     await account.save();
     responseHandler.ok(res, "Đổi mật khẩu thành công !");
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     responseHandler.error(res);
   }
-}
+};
 const updateInfo = async (req, res) => {
   try {
-    const accountFields = ['displayName', 'avatar', 'phoneNumber'];
-    const restaurantFields = ['restaurantName', 'location', 'openingHours', 'closingHours', 'type', 'priceRange', 'website', 'facebook', 'instagram', 'description', 'menu'];
+    const accountFields = ["displayName", "avatar", "phoneNumber"];
+    const restaurantFields = [
+      "restaurantName",
+      "location",
+      "openingHours",
+      "closingHours",
+      "type",
+      "priceRange",
+      "website",
+      "facebook",
+      "instagram",
+      "description",
+      "menu",
+    ];
 
     const account = await accountModel.findById(req.account.id);
-    accountFields.forEach(field => {
+    accountFields.forEach((field) => {
       if (req.body[field] !== undefined) {
         account[field] = req.body[field];
       }
@@ -179,11 +206,20 @@ const updateInfo = async (req, res) => {
 
     if (req.account.role === ROLES_LIST.restaurant) {
       const restaurant = await Restaurant.findOne({ account: req.account.id });
-      restaurantFields.forEach(field => {
+      restaurantFields.forEach((field) => {
         // Map the request body fields to the restaurant model fields
-        const modelField = field === 'restaurantName' ? 'name' : field === 'openingHours' ? 'openTime' : field === 'closingHours' ? 'closeTime' : field === 'type' ? 'restaurantStyle' : field;
+        const modelField =
+          field === "restaurantName"
+            ? "name"
+            : field === "openingHours"
+            ? "openTime"
+            : field === "closingHours"
+            ? "closeTime"
+            : field === "type"
+            ? "restaurantStyle"
+            : field;
         if (req.body[field] !== undefined) {
-          if (['website', 'facebook', 'instagram'].includes(field)) {
+          if (["website", "facebook", "instagram"].includes(field)) {
             // Handle nested socialMedia object
             restaurant.socialMedia = restaurant.socialMedia || {};
             restaurant.socialMedia[field] = req.body[field];
@@ -193,17 +229,23 @@ const updateInfo = async (req, res) => {
         }
       });
       await restaurant.save();
-      responseHandler.ok(res, "Cập nhật thông tin thành công !");
+      responseHandler.ok(res, {
+        account: account,
+        message: "Cập nhật thông tin nhà hàng thành công !",
+      });
     } else {
       // For roles other than restaurant, the account update is sufficient
-      responseHandler.ok(res, "Cập nhật thông tin thành công !");
+      responseHandler.ok(res, {
+        account: account,
+        message: "Cập nhật thông tin nhà hàng thành công !",
+      });
     }
   } catch (error) {
     console.error(error);
     responseHandler.error(res);
   }
-}
-export default { 
+};
+export default {
   signup,
   login,
   changePassword,

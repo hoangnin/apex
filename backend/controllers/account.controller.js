@@ -166,15 +166,39 @@ const forgotPassword = async (req, res) => {
 }
 const updateInfo = async (req, res) => {
   try {
-    const { displayName, avatar, phoneNumber } = req.body;
+    const accountFields = ['displayName', 'avatar', 'phoneNumber'];
+    const restaurantFields = ['restaurantName', 'location', 'openingHours', 'closingHours', 'type', 'priceRange', 'website', 'facebook', 'instagram', 'description', 'menu'];
+
     const account = await accountModel.findById(req.account.id);
-    account.displayName = displayName;
-    account.avatar = avatar;
-    account.phoneNumber = phoneNumber;
+    accountFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        account[field] = req.body[field];
+      }
+    });
     await account.save();
-    responseHandler.ok(res, "Cập nhật thông tin thành công !");
-  }
-  catch (error) {
+
+    if (req.account.role === ROLES_LIST.restaurant) {
+      const restaurant = await Restaurant.findOne({ account: req.account.id });
+      restaurantFields.forEach(field => {
+        // Map the request body fields to the restaurant model fields
+        const modelField = field === 'restaurantName' ? 'name' : field === 'openingHours' ? 'openTime' : field === 'closingHours' ? 'closeTime' : field === 'type' ? 'restaurantStyle' : field;
+        if (req.body[field] !== undefined) {
+          if (['website', 'facebook', 'instagram'].includes(field)) {
+            // Handle nested socialMedia object
+            restaurant.socialMedia = restaurant.socialMedia || {};
+            restaurant.socialMedia[field] = req.body[field];
+          } else {
+            restaurant[modelField] = req.body[field];
+          }
+        }
+      });
+      await restaurant.save();
+      responseHandler.ok(res, "Cập nhật thông tin thành công !");
+    } else {
+      // For roles other than restaurant, the account update is sufficient
+      responseHandler.ok(res, "Cập nhật thông tin thành công !");
+    }
+  } catch (error) {
     console.error(error);
     responseHandler.error(res);
   }

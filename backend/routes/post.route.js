@@ -1,5 +1,6 @@
 import express from 'express';
 import postController from '../controllers/post.controller.js';
+import tokenMiddleware from '../middlewares/token.middleware.js';
 
 // /posts/....
 const router = express.Router({ mergeParams: true });
@@ -17,7 +18,9 @@ router.get('/:restaurantId/reviews', postController.getPostReviews)
 
 router.post('/:postId/review', postController.createPostReview)
 
+router.get('/:postId/like', tokenMiddleware.authenticate, postController.likePost)
 
+router.get('/:postId/unlike',tokenMiddleware.authenticate, postController.unlikePost)
 
 
 

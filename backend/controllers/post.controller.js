@@ -2,6 +2,7 @@ import { get } from "mongoose";
 import responseHandler from "../handlers/response.handler.js";
 import postModel from "../models/post.model.js";
 import reviewModel from "../models/review.model.js";
+import CustomerModel from "../models/customer.model.js";
 const getPosts = async (req, res) => {
   try {
     let posts = await postModel.find().populate('author', 'username _id avatar');
@@ -116,11 +117,61 @@ const createPostReview = async (req, res) => {
     responseHandler.error(res);
   }
 };
+const likePost = async (req, res) => {
+  try {
+    const post = await postModel.findById(req.params.postId);
+    if (!post) {
+      return responseHandler.error(res, 'Post not found', 404);
+    }
+
+    post.likeCount += 1;
+    await post.save();
+    const customer = await CustomerModel.findOne({account: req.account.id});
+    await CustomerModel.updateOne(
+      { _id: customer.id },
+      { $addToSet: { liked_posts: req.params.postId } }
+    );
+
+    responseHandler.ok(res, {
+      message: 'Post liked successfully',
+      post: post,
+    });
+  } catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
+const unlikePost = async (req, res) => {
+  try {
+    const post = await postModel.findById(req.params.postId);
+    if (!post) {
+      return responseHandler.error(res, 'Post not found', 404);
+    }
+
+    post.likeCount -= 1;
+    await post.save();
+    const customer = await CustomerModel.findOne({account: req.account.id});
+    await CustomerModel.updateOne(
+      { _id: customer.id },
+      { $pull: { liked_posts: req.params.postId } }
+    );
+
+    responseHandler.ok(res, {
+      message: 'Post unliked successfully',
+      post: post,
+    });
+  } catch (error) {
+    console.error(error);
+    responseHandler.error(res);
+  }
+}
 export default {
   getPosts,
   getPost,
   createNewPost,
   updatePost,
   getPostReviews,
-  createPostReview
+  createPostReview,
+  likePost,
+  unlikePost,
 }

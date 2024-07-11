@@ -102,7 +102,7 @@ const login = async (req, res, next) => {
       .select(
         "id username displayName password salt phoneNumber email role avatar"
       );
-
+      const customer = await customerModel.findOne({ account: account.id })
     // if (account.role === ROLES_LIST.photographer) {
     //   const photographer = await photographerModel.findOne({ account: account.id })
     //     .select("location status gender age description experienceYears bookingCount type_of_account");
@@ -127,6 +127,8 @@ const login = async (req, res, next) => {
     account.password = undefined;
     account.salt = undefined;
     userData.token = token;
+    userData.accumulated_points = customer.accumulated_points
+    userData.liked_posts = customer.liked_posts
 
     responseHandler.created(res, {
       token,

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import modelOptions from "./model.options.js";
 var commentSchema = mongoose.Schema({
-    postId: {
+    blogId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post',
+      ref: 'Blog',
       required: true
     },
     depth: {
@@ -12,6 +12,7 @@ var commentSchema = mongoose.Schema({
     },
     parentId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comments',
         default: null
     },
     postedDate: {type: Date, default: Date.now},

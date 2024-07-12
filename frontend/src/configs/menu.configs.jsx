@@ -16,7 +16,7 @@ const main = [
     display: "Blog",
     path: "/blog",
     state: "blog",
-    role: ["CUSTOMER", "EMPLOYEE", "RESTAURANT"], 
+ 
 
     icon: <EditNoteOutlinedIcon/>
   },
@@ -26,7 +26,15 @@ const main = [
     state: "voucher",
     role: "CUSTOMER",
     icon: <HistoryOutlinedIcon/>
-  }
+  },
+  // {
+  //   display: "Add Post",
+  //   path: "/post",
+  //   state: "post",
+  //   role: [ "RESTAURANT"], 
+
+  //   icon: <EditNoteOutlinedIcon/>
+  // },
 ]
 
 const user = [

@@ -76,7 +76,6 @@ const DetailPost = () => {
                 const formattedDate = date.toLocaleDateString('en-CA'); // '2024-05-26'
                 const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }); // '09:28'
                 setPostDetails({ post: response, formattedDate, formattedTime });
-                console.log(response);
             }
             if (err) toast.error(err.message);
         };
@@ -94,7 +93,6 @@ const DetailPost = () => {
         };
         (postDetails.post && getReviews());
     }, [postDetails.post.restaurant]);
-    console.log(postDetails.reviews);
 
     const handleFavoriteClick = async (commentIndex) => {
         const updatedComments = [...postDetails.post.comments];
@@ -124,6 +122,15 @@ const DetailPost = () => {
     const handleChange = (event) => {
         setValue(event.target.value);
     };
+
+    const commentsPerPage = 4;
+    const totalPages =postDetails.post.comments ? Math.ceil(postDetails.post.comments.length / commentsPerPage) : 0;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const indexOfLastComment = currentPage * commentsPerPage;
+    const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+    const currentComments = postDetails.post.comments && postDetails.post.comments.slice(indexOfFirstComment, indexOfLastComment);
+
 
     return (
         <Box sx={{
@@ -255,57 +262,47 @@ const DetailPost = () => {
                     </Select>
                 </Box>
 
-                <Box sx={{
-                    mt: '10px',
-                    border: '1px solid #E0E0E0',
-                    padding: '20px',
-                    borderRadius: '10px',
-                }}>
+               
+                {currentComments&&currentComments.map((comment, index) => (
+                    <Fragment key={index}>
+                        <Box my='7px' display="flex" >
 
+                            <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src={comment.created_by.avatar} />
 
-                    {postDetails.post.comments && postDetails.post.comments.map((comment, index) => (
-                        <Fragment key={index}>
-                            <Box my='7px' display="flex" >
-
-                                <Avatar sx={{ width: 56, height: 56, border: '4px solid gray' }} src={comment.created_by.avatar} />
-
-                                <Box width='100%' ml='13px' display="flex" flexDirection="column" justifyContent="center">
-                                    <Box display='flex' justifyContent='space-between' alignItems='center'>
-                                        <Box display='flex' flexDirection='row'>
-                                            <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>{comment.created_by.username}</Typography>
-                                            <StyledRating
-                                                name="highlight-selected-only"
-                                                defaultValue={comment.rating}
-                                                IconContainerComponent={IconContainer}
-                                                getLabelText={(value) => customIcons[value].label}
-                                                highlightSelectedOnly
-                                                readOnly
-                                            />
-                                        </Box>
-                                        <Button
-
-                                            variant="text"
-                                            color='inherit'
-                                            startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
-                                            onClick={()=>handleFavoriteClick(index)}
-                                        >    {quantityLike}
-                                        </Button>
+                            <Box width='100%' ml='13px' display="flex" flexDirection="column" justifyContent="center">
+                                <Box display='flex' justifyContent='space-between' alignItems='center'>
+                                    <Box display='flex' flexDirection='row'>
+                                        <Typography sx={{ fontSize: '19px', mr: 2, fontWeight: 'bold' }}>{comment.created_by.username}</Typography>
+                                        <StyledRating
+                                            name="highlight-selected-only"
+                                            defaultValue={comment.rating}
+                                            IconContainerComponent={IconContainer}
+                                            getLabelText={(value) => customIcons[value].label}
+                                            highlightSelectedOnly
+                                            readOnly
+                                        />
                                     </Box>
-
-                                    <Typography sx={{}}>{comment.content}</Typography>
-
+                                    <Button
+                                        variant="text"
+                                        color='inherit'
+                                        startIcon={liked ? <Favorite sx={{ color: "red" }} /> : <FavoriteBorder sx={{ color: "gray" }} />}
+                                        onClick={()=>handleFavoriteClick(indexOfFirstComment + index)}
+                                    >    {quantityLike}
+                                    </Button>
                                 </Box>
+
+                                <Typography sx={{}}>{comment.content}</Typography>
+
                             </Box>
-                            {index !== postDetails.post.comments.length - 1 && <Divider />}
-                        </Fragment>
-                    ))}
-
-
-                </Box>
-
+                        </Box>
+                        {index !== currentComments.length - 1 && <Divider />}
+                    </Fragment>
+                ))}
                 <Box mt={1} display="flex" justifyContent="center">
-                    <Pagination count={10} showFirstButton showLastButton />
+                    <Pagination count={totalPages} page={currentPage} onChange={(event, page) => setCurrentPage(page)} showFirstButton showLastButton />
                 </Box>
+
+                
             </Box>
 
         </Box>

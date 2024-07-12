@@ -23,11 +23,11 @@ import {
   TextField
 } from "@mui/material";
 import { useState } from "react";
-import {  useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 
 
-const Post = ({ post ,key}) => {
+const Post = ({ post, key }) => {
 
   const navigate = useNavigate();
 
@@ -80,35 +80,46 @@ const Post = ({ post ,key}) => {
   // };
 
   const navigateToDetailPost = (post) => {
-    navigate(`/post/${post._id}`,{ state:  {postData: post._id}  });
+    navigate(`/post/${post._id}`, { state: { postData: post._id } });
     // navigate(`/post/${post._id}`);
   }
-  
+
   // Usage
   // const totalCommentsAndReplies = getTotalCommentsAndReplies(post.comments);
 
+  const timestamp = post.createdAt;
+  const date = new Date(timestamp);
+
+  // Extract hours and minutes
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+  // Format the time as "HH:MM"
+  const formattedTime = `${hours}:${minutes}`;
+
+
   return (
     <>
-      {loading ? <Stack margin={5} padding={2} spacing={1}  borderRadius={2} border='1px solid #e5e7eb' >
+      {loading ? <Stack margin={5} padding={2} spacing={1} borderRadius={2} border='1px solid #e5e7eb' >
         <Stack direction="row" spacing={2} alignItems="center">
-        <Skeleton variant="circular" width={50} height={50} />
-        <Stack direction="column" spacing={1} alignItems="center">
-        <Skeleton variant="text" width={100} height={15}  />
-        <Skeleton variant="text" width={100} height={15}/>
-        </Stack>
+          <Skeleton variant="circular" width={50} height={50} />
+          <Stack direction="column" spacing={1} alignItems="center">
+            <Skeleton variant="text" width={100} height={15} />
+            <Skeleton variant="text" width={100} height={15} />
+          </Stack>
         </Stack>
         <Skeleton variant="rectangular" height={300} />
         <Stack direction="row" spacing={7} justifyContent="center">
-        <Skeleton variant="text" width={90} height={15}  />
-        <Skeleton variant="text" width={90} height={15}  />
-        <Skeleton variant="text" width={90} height={15}/>
+          <Skeleton variant="text" width={90} height={15} />
+          <Skeleton variant="text" width={90} height={15} />
+          <Skeleton variant="text" width={90} height={15} />
         </Stack>
       </Stack>
-        : <Card sx={{ margin: 5,borderRadius:2 }}>
+        : <Card sx={{ margin: 5, borderRadius: 2 }}>
           <CardHeader
             avatar={
               post.author.avatar === null ? <Avatar>{post.author.username.charAt(0)}</Avatar> :
-              <Avatar src={post.author.avatar} />
+                <Avatar src={post.author.avatar} />
 
             }
             action={
@@ -117,7 +128,7 @@ const Post = ({ post ,key}) => {
               </IconButton>
             }
             title={post.author.username}
-            subheader={post.time}
+            subheader={formattedTime}
           />
           <CardMedia
             component="img"
@@ -125,10 +136,10 @@ const Post = ({ post ,key}) => {
               maxHeight: '500px'
             }}
             image={post.content[0].image}
-            onClick={()=>navigateToDetailPost(post)}
+            onClick={() => navigateToDetailPost(post)}
           />
           <CardContent>
-            <Typography sx={{color:'rgb(82 82 82);',fontWeight:'bold'}} variant="h6" color="text.secondary">
+            <Typography sx={{ color: 'rgb(82 82 82);', fontWeight: 'bold' }} variant="h6" color="text.secondary">
               {post.title}
             </Typography>
           </CardContent>
@@ -199,12 +210,13 @@ const Post = ({ post ,key}) => {
             Comments
           </Typography>
 
-          <Box sx={{ mt: 2 ,overflowY: 'auto',maxHeight:'300px', flexGrow: 1,pr:2, scrollbarWidth: 'thin',
-                scrollbarColor: '#ccc rgba(0,0,0,0.1)',
-                '&::-webkit-scrollbar-track': {
-                  boxShadow: 'inset 0 0 5px grey',
-                  borderRadius: '10px'
-                },
+          <Box sx={{
+            mt: 2, overflowY: 'auto', maxHeight: '300px', flexGrow: 1, pr: 2, scrollbarWidth: 'thin',
+            scrollbarColor: '#ccc rgba(0,0,0,0.1)',
+            '&::-webkit-scrollbar-track': {
+              boxShadow: 'inset 0 0 5px grey',
+              borderRadius: '10px'
+            },
 
           }}>
             {comments.map((comment) => (
@@ -251,9 +263,9 @@ const Post = ({ post ,key}) => {
               </Stack>
             ))}
           </Box>
-           <Box
+          <Box
             component="form"
-            sx={{ mt: 2, display: 'flex', alignItems: 'center', width: '100%'}}
+            sx={{ mt: 2, display: 'flex', alignItems: 'center', width: '100%' }}
             onSubmit={handleCommentSubmit}
           >
             <TextField
@@ -269,7 +281,7 @@ const Post = ({ post ,key}) => {
             </IconButton>
           </Box>
         </Paper>
-       
+
       </Modal>
     </>
 

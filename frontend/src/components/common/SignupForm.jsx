@@ -94,7 +94,7 @@ const SignupForm = ({ switchAuthState }) => {
         signUpForm.resetForm();
         dispatch(setUser(response));
         dispatch(setAuthModalOpen(false));
-        toast.success("Sign in success");
+        toast.success("Sign up success");
       }
 
       if (err) setErrorMessage(err.message);

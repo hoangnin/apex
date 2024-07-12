@@ -26,7 +26,6 @@ const uploadImageApi = {
 
   uploadAvatar: async (avatar) => {
     try {
-      // console.log(avatar);
       const response = await privateClient.post(
         uploadImageEndpoint.uploadAvatar,
         avatar,

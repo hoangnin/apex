@@ -8,6 +8,7 @@ import Add from "../components/common/Add"
 import AddPost from "../components/common/AddPost"
 import DetailPost from "../pages/DetailPost"
 import Detail from "../pages/Detail"
+import DetailBlog from "../pages/DetailBlog"
 
 export const routesGen = {
     home: "/",
@@ -17,7 +18,8 @@ export const routesGen = {
     history: "/history",
     blog: "/blog",
     post: "/post",
-    detailPost:(id)=> `/post/${id}`
+    detailPost:(id)=> `/post/${id}`,
+    detailBlog:(id)=> `/blog/${id}`
 };
 
 const routes = [
@@ -64,7 +66,12 @@ const routes = [
     },
     {
         path: "/post",
-        element: <AddPost />,
+        element: 
+        <ProtectedPage>
+
+            <AddPost />
+        </ProtectedPage>
+        ,
         state: "post"
     },
     ,
@@ -72,6 +79,12 @@ const routes = [
         path: "/post/:postId",
         element: <DetailPost />,
         state: "detail_post"
+
+    },
+    {
+        path: "/blog/:blogId",
+        element: <DetailBlog />,
+        state: "detail_blog"
 
     }
 ];

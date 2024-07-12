@@ -8,9 +8,12 @@ import ReviewsIcon from '@mui/icons-material/Reviews';
 import { useEffect, useState } from "react"
 import postApi from "../api/modules/post.api"
 import { toast } from "react-toastify"
+import NotiModal from "../components/common/NotiModal"
+import { useSelector } from "react-redux"
 
 const HomePage = () => {
-
+  const { user } = useSelector((state) => state.user);
+  // console.log(user.role,user.active)
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -93,7 +96,7 @@ const HomePage = () => {
           </Button>
         </Box>
       </Box>
-      <Box flex={{ xs: 10, md: 4 }} p={{ xs: 0, md: 2 }}>
+      <Box flex={{ xs: 10, md: 3 }} p={{ xs: 0, md: 2 }}>
         {posts.map((item, index) => {
           return <Post post={item} key={item.id} />
         })}
@@ -104,6 +107,10 @@ const HomePage = () => {
 
       </Box>
       <Add />
+      {user && user.role==='RESTAURANT' && !user.active && <NotiModal/>
+            }
+
+
     </Box>
   )
 }

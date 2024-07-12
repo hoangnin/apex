@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import MenuIcon from "@mui/icons-material/Menu";
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 import { AppBar, Box, Button, IconButton, Stack, Toolbar, Typography, useScrollTrigger } from "@mui/material";
 import { cloneElement, useState } from "react";
@@ -89,67 +90,28 @@ const Topbar = () => {
                                     <Box mr='3px'>{item.icon}</Box>
                                     <Typography>{item.display}</Typography>
                                 </Button>)
-                                // {
-                                //     if (user && item.role) {
-                                //         return (
-                                //             <Button
-                                //                 key={index}
-                                //                 sx={{
-                                //                     fontFamily: '"Nunito", sans-serif',
-                                //                     fontSize: "0.9rem",
-                                //                     fontWeight: "600",
-                                //                     color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-                                //                     mr: 2
-                                //                 }}
-                                //                 component={Link}
-                                //                 to={item.path}
-                                //                 variant={appState.includes(item.state) ? "contained" : "text"}
-                                //             >
-                                //                 <Box mr='3px'>{item.icon}</Box>
-                                //                 <Typography>{item.display}</Typography>
-                                //             </Button>
-                                //         );
-                                //     } else if (!user && !item.role) {
-                                //         return (
-                                //             <Button
-                                //                 key={index}
-                                //                 sx={{
-                                //                     fontFamily: '"Nunito", sans-serif',
-                                //                     fontSize: "0.9rem",
-                                //                     fontWeight: "600",
-                                //                     color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-                                //                     mr: 2
-                                //                 }}
-                                //                 component={Link}
-                                //                 to={item.path}
-                                //                 variant={appState.includes(item.state) ? "contained" : "text"}
-                                //             >
-                                //                 <Box mr='3px'>{item.icon}</Box>
-                                //                 <Typography>{item.display}</Typography>
-                                //             </Button>
-                                //         )
-                                //     }else if(user && item.role.includes("CUSTOMER") && user.role === "CUSTOMER"){
-                                //         return (
-                                //             <Button
-                                //         key={index}
-                                //         sx={{
-                                //             fontFamily: '"Nunito", sans-serif',
-                                //             fontSize: "0.9rem",
-                                //             fontWeight: "600",
-                                //             color: appState.includes(item.state) ? "primary.contrastText" : "inherit",
-                                //             mr: 2
-                                //         }}
-                                //         component={Link}
-                                //         to={item.path}
-                                //         variant={appState.includes(item.state) ? "contained" : "text"}
-                                //     >
-                                //         <Box mr='3px'>{item.icon}</Box>
-                                //         <Typography>{item.display}</Typography>
-                                //     </Button>
-                                //         )
-                                //     }
-                                // }
+                         
                                 )}
+                                {user&&user.role==="RESTAURANT" && <Button
+                                 
+                                    sx={{
+                                        fontFamily: '"Nunito", sans-serif',
+                                        fontSize: "0.9rem",
+                                        fontWeight: "600",
+                                        color: appState.includes("post") ? "primary.contrastText" : "inherit",
+                                        bgcolor: appState.includes("post") ? "#01877E" : "white",
+                                        mr: 2,
+                                        '&:hover': {
+                                            bgcolor: appState.includes("post") ? "#01877E" : "white",
+                                        }
+                                    }}
+                                    component={Link}
+                                    to={`/post`}
+                                    variant={appState.includes("post") ? "contained" : "text"}
+                                >
+                                    <Box mr='3px'><EditNoteOutlinedIcon/></Box>
+                                    <Typography>Add Post</Typography>
+                                </Button>}
                             </Box>
                             {!user && <Button
                                 variant="text"

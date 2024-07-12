@@ -73,10 +73,10 @@ const userApi = {
       return { err };
     }
   },
-  updatePassword: async ({ password, newPassword, confirmNewPassword }) => {
+  updatePassword: async ({ oldPassword, newPassword, confirmNewPassword }) => {
     try {
-      const response = await privateClient.put(userEndpoints.updatePassword, {
-        password,
+      const response = await privateClient.post(userEndpoints.updatePassword, {
+        oldPassword,
         newPassword,
         confirmNewPassword,
       });

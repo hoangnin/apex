@@ -7,6 +7,7 @@ import userApi from "../api/modules/user.api";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { LoadingButton } from "@mui/lab";
+import { toast } from "react-toastify";
 
 const ChangePassword = () => {
 
@@ -16,12 +17,12 @@ const ChangePassword = () => {
 
   const form = useFormik({
     initialValues: {
-       password: "",
+       oldPassword: "",
        newPassword: "",
        confirmNewPassword: ""
     },
     validationSchema: Yup.object({
-       password: Yup.string()
+      oldPassword: Yup.string()
           .min(8, "Mật khẩu phải có ít nhất 8 ký tự!")
           .required("Cần nhập trường này !"),
        newPassword: Yup.string()
@@ -37,6 +38,7 @@ const ChangePassword = () => {
       setErrorMessage(undefined);
       setIsUpdateRequest(true)
       const { response, err } = await userApi.updatePassword(values);
+      console.log(response, err);
       setIsUpdateRequest(false)
 
       if (response) {
@@ -71,7 +73,7 @@ const ChangePassword = () => {
                <TextField
                   type="password"
                   placeholder="Previous password"
-                  name="password"
+                  name="oldPassword"
                   fullWidth
                   value={form.values.password}
                   onChange={form.handleChange}

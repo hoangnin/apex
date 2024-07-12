@@ -5,10 +5,10 @@ import Footer from "../common/Footer"
 import AuthModal from "../common/AuthModal"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
+import NotiModal from "../common/NotiModal"
 
 const MainLayout = () => {
     // const dispatch = useDispatch();
-    // const { user } = useSelector((state) => state.user);
 
 
 
@@ -30,7 +30,6 @@ const MainLayout = () => {
             {/* globalloading */}
 
             {/* login modal */}
-
             <AuthModal/>
             {/* login modal */}
 

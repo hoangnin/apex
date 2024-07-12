@@ -9,8 +9,10 @@ const uploadAvatar = async (req, res) => {
      try {
           const file = req.file;
           console.log(file);
+          console.log(file.originalname);
           const dateTime = giveCurrentDateTime();
 
+          
           const storageRef = ref(storage, `avatars/${file.originalname + "       " + dateTime}`);
 
           const metadata = {

@@ -1,5 +1,5 @@
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { ListItemButton, ListItemIcon, ListItemText, Menu, Typography } from "@mui/material";
+import { Avatar, ListItemButton, ListItemIcon, ListItemText, Menu, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import menuConfigs from "../../configs/menu.configs";
@@ -24,11 +24,13 @@ const UserMenu = () => {
        navigate('/');
        toast.success("Logged out successfully");
     }
-
+    console.log(user.avatar)
     return (
 
         <>
-            <Typography
+            <Stack direction="row" spacing={1} alignItems="center">
+               {user.avatar&& <Avatar src={user.avatar} />}
+                <Typography
                 sx={{ cursor: "pointer" ,
                 fontFamily: '"Nunito", sans-serif',
                 fontSize: "1rem",
@@ -37,6 +39,8 @@ const UserMenu = () => {
             >
                 {user.displayName}
             </Typography>
+                </Stack>
+            
             <Menu
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}

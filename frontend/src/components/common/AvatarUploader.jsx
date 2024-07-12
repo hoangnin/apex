@@ -4,7 +4,6 @@ import React, { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone';
 import { FiUploadCloud } from "react-icons/fi";
 import uploadImageApi from '../../api/modules/upload.api';
-// import uploadImageApi from "../../api/modules/upload.api";
 
 
 const AvatarUploader = ({handleUpload,avatar }) => {
@@ -24,6 +23,7 @@ const AvatarUploader = ({handleUpload,avatar }) => {
 
       setIsUploading(true);
       const avatarLink = await uploadImageApi.uploadAvatar(avatar);
+      console.log(avatarLink);
       setAvatarUrl(avatarLink);
       setIsUploading(false);
       handleUpload(avatarLink);
@@ -31,11 +31,11 @@ const AvatarUploader = ({handleUpload,avatar }) => {
 
 
    const { getRootProps, getInputProps } = useDropzone({
-      onDrop,
+      
       accept: {
        'image/*': ['.jpeg', '.jpg', '.png'],
       },
-      maxSize: 1024*1000
+      onDrop,
     });
 
    return (

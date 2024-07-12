@@ -32,7 +32,6 @@ const Profile = () => {
     }, []);
 
     const handleAvatarUpload = async (avatarLink) => {
-        console.log(avatarLink)
         setAvatarUrl(avatarLink);
     }
 
@@ -44,11 +43,11 @@ const Profile = () => {
             displayName: user.displayName,
             phoneNumber: user.phoneNumber,
             email: user.email,
-            location: user?.role === 'RESTAURANT' ? user.data.location : '',
-            cuisine: user?.role === 'RESTAURANT' ? user.data.cuisine : '',
-            description: user?.role === 'RESTAURANT' ? user.data.description : '',
-            openingHours: user?.role === 'RESTAURANT' ? user.data.openingHours : '',
-            closingHours: user?.role === 'RESTAURANT' ? user.data.closingHours : '',
+            location: user?.role === 'RESTAURANT' ? user.data.location : null,
+            cuisine: user?.role === 'RESTAURANT' ? user.data.cuisine : null,
+            description: user?.role === 'RESTAURANT' ? user.data.description : null,
+            openingHours: user?.role === 'RESTAURANT' ? user.data.openingHours : null,
+            closingHours: user?.role === 'RESTAURANT' ? user.data.closingHours : null,
             // menu: user?.role === 'RESTAURANT' ? user.data.menu:''
         },
         validationSchema: Yup.object({
@@ -70,12 +69,13 @@ const Profile = () => {
         onSubmit: async values => {
             setErrorMessage(undefined);
             setIsUpdateRequest(true)
-            // values.avatar = avatarUrl;
+            values.avatar = avatarUrl;
             const { response, err } = await userApi.updateInfo(values);
             setIsUpdateRequest(false)
+            
 
             if (response) {
-                dispatch(setUser(response));
+                dispatch(setUser(response.account));
 
                 toast.success("Cập nhật thông tin thành công !");
             }

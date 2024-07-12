@@ -12,6 +12,10 @@ const customerSchema = Schema({
           type: Number,
           default: 0
      },
+     liked_posts: [{
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Post',
+     }],
      // vouchers: [{
      //      type: mongoose.Schema.Types.ObjectId,
      //      ref: 'Voucher', 

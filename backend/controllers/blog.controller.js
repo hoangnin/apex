@@ -1,7 +1,8 @@
-import { get } from "mongoose";
+import mongoose, { get } from "mongoose";
 import responseHandler from "../handlers/response.handler.js";
 import blogModel from "../models/blog.model.js";
 import accountModel from "../models/account.model.js";
+import commentModel from "../models/comment.model.js";
 
 const createNewBlog = async (req, res) => {
   try {
@@ -27,7 +28,7 @@ const createNewBlog = async (req, res) => {
 const getBlogs = async (req, res) => {
   try {
     const blogs = await blogModel.find();
-    const convertedBlogs = await convertBlog(blogs); 
+    const convertedBlogs = await convertBlog(blogs);
     responseHandler.ok(res, convertedBlogs);
   } catch (error) {
     console.error(error);
@@ -36,20 +37,52 @@ const getBlogs = async (req, res) => {
   }
 };
 
-const convertBlog = async (blogs) => { 
+const convertBlog = async (blogs) => {
   try {
+    if (!Array.isArray(blogs)) {
+      throw new Error("blogs must be an array");
+    }
     const convertedBlogs = await Promise.all(blogs.map(async (blog) => {
       const customer = await accountModel.findById(blog.customer);
-      console.log("Customer: ", customer);
+      let comments = await commentModel.find({ blogId: new mongoose.Types.ObjectId(blog._id) });
+      comments = convertCommentsToTree(comments);
       return {
         ...blog._doc,
         customer: customer ? customer._doc : null,
+        comments: comments
       };
     }));
-    return convertedBlogs; 
+    return convertedBlogs;
   } catch (error) {
     console.error("Error converting blogs: ", error.message);
-    throw error; 
+    throw error;
+  }
+};
+
+const convertCommentsToTree = (comments) => {
+  const commentMap = new Map();
+  comments.forEach(comment => {
+    commentMap.set(comment._id.toString(), { ...comment._doc, child_comment: [] });
+  });
+  const rootComments = [];
+  comments.forEach(comment => {
+    const commentWithChildren = commentMap.get(comment._id.toString());
+    if (comment.parentId) {
+      const parentComment = commentMap.get(comment.parentId.toString());
+      if (parentComment) {
+        parentComment.child_comment.push(commentWithChildren);
+      }
+    } else {
+      rootComments.push(commentWithChildren);
+    }
+  });
+  rootComments.forEach(rootComment => sortCommentsByDepth(rootComment));
+  return rootComments;
+};
+const sortCommentsByDepth = (comment) => {
+  if (comment.child_comment.length > 0) {
+    comment.child_comment.sort((a, b) => a.depth - b.depth);
+    comment.child_comment.forEach(childComment => sortCommentsByDepth(childComment));
   }
 };
 

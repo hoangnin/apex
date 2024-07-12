@@ -12,7 +12,7 @@ const addComment = (req, res) => {
       name: req.body.name,
     },
     commentText: req.body.commentText,
-    postId: req.body.postId,
+    blogId: req.body.blogId,
   };
   if ("parentId" in req.body) {
     data.parentId = req.body.parentId;
@@ -23,15 +23,15 @@ const addComment = (req, res) => {
   }
   const comment = new Comment(data);
   comment
-    .save()
+    .save() 
     .then((comment) =>
         responseHandler.ok(res, {  
             comment: comment,
         })
     //   res.json({
-    //     comment: comment,
+    //     comment: comment, 
     //   })
-    )
+    ) 
 }catch(error) {
     console.error(error);
     responseHandler.error(res);
